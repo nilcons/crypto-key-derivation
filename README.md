@@ -359,3 +359,25 @@ First 20 public keys for Ethereum Classic:
     0x902162f7899076d1572796dac29cf117086bfe1e
 
 Compatibility with trezor has been checked both for ETH and ETC.
+
+# Generating the last word in the passphrase.
+
+In bip39 the passphrase checksum should be valid. After choosing the first n-1
+words randomly the last can be chosen only from a subset of words. Generate
+the list like this:
+
+    $ ./bip39-last-word/last_word.py <<EOF
+      scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress
+      EOF
+    Good last words:
+    alcohol
+    another
+    ball
+    brother
+    cherry
+    clump
+    ...
+
+For reading words interactively in shuffled order (against keylogger):
+
+    $ ./bip39-last-word/interactive_input.py 23 | ./bip39-last-word/last_word.py
