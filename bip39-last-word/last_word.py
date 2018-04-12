@@ -1,10 +1,10 @@
 #!./venv/bin/python
 
-from electrum import util, keystore, mnemonic
-
+from electrum import keystore, mnemonic, coinchooser
 
 import argparse
 import sys
+import os
 
 # We support only standard lengths 
 # https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
@@ -39,13 +39,19 @@ def main():
     words = read_and_validate()
 
     wordlist = mnemonic.load_wordlist("english.txt")
+    print("Good last words:")
+    ok_words = []
     for last in wordlist:
         (checksum_ok, wordlist_ok) = keystore.bip39_is_checksum_valid(
             " ".join(words + [last]))
         assert wordlist_ok
         if checksum_ok:
             print(last)
+            ok_words.append(last)
 
+    prng = coinchooser.PRNG(os.urandom(100))
+    print("\nA random choice would be:")
+    print(prng.choice(ok_words))
 
 if __name__ == "__main__":
   main()
