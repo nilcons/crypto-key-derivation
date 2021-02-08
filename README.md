@@ -22,7 +22,7 @@ Finding out derivation paths:
 # Setup
 
     virtualenv -p python3 venv
-    venv/bin/pip install https://github.com/spesmilo/electrum/archive/42c10c2fecf5cc56d149b7d09ae2dddb36560624.tar.gz#sha256=69327086054e29d190c0d843a42874c5aaa8dc4f4f596603925308c2c8661a3a ipython pysha3 cryptography 'stellar-sdk==3.*'
+    venv/bin/pip install https://github.com/spesmilo/electrum/archive/42c10c2fecf5cc56d149b7d09ae2dddb36560624.tar.gz#sha256=69327086054e29d190c0d843a42874c5aaa8dc4f4f596603925308c2c8661a3a ipython pysha3 cryptography 'stellar-sdk==3.*' pycrypto base58
 
 # BIP39
 Online tool: https://iancoleman.github.io/bip39/#english
@@ -306,7 +306,7 @@ redone properly.  But it works! :)
 
 First keypair without passphrase:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xprv2xprv-hardened-ed25519.py 44 | ./xprv2xprv-hardened-ed25519.py 148 | ./xprv2xprv-hardened-ed25519.py 0 | ./xprv2xlm.py 
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xprv2xprv-hardened-ed25519.py 44 | ./xprv2xprv-hardened-ed25519.py 148 | ./xprv2xprv-hardened-ed25519.py 0 | ./xprv2xlm.py
     SCGVFOJNHSOR55IAQQT2R6PFHEHCD3HVTB7PGTC3DNVL74LZQBYUBHAT
     GD23O4PMK22FKSQECOOBOE3WUEPHTB2QKMALHZIADYREY3WGZFUBHNFX
 
@@ -320,15 +320,57 @@ Things to note:
   - these hacky tools only work with xprvs and hardened paths, so no luck for the webshop usecases yet, :(
   - as we only handle xprvs, the final xprv2xlm tool also prints the public key in the second line.
 
-These results have been validated with:
+Compatibility has been checked:
   - Trezor One on 2021-02-08,
   - Ledger Nano S on 2021-02-08.
 
-# TODO
+# XRP (Ripple)
 
-xrp (trezor no support, checked with ledgernano):
- - rH4b7nXtPgfjmtdfVLcY7qvMUFcMwLE5HX
- - with passphrase: rhbZf6hesPYXX1VgBqCXjK6jvAAbiwL4T6
+Info about XRP key generation in the original XRP wallet: https://xrpl.org/cryptographic-keys.html
+
+Info about address encoding: https://xrpl.org/accounts.html#address-encoding
+
+Trezor One doesn't support XRP.  The Ledger Nano S wallet supports XRP
+with derivation path of m/44'/144'/0'/0/0.  But the resulting keypair
+at this derivation path is used DIRECTLY, and the picture described in
+the XRP documentation
+(https://xrpl.org/cryptographic-keys.html#secp256k1-key-derivation) is
+not used at all.
+
+This means that XRP is a very weird crypto regarding BIP32: I can
+generate you the public key that will be the same as Ledger Nano's
+key, but I can't give you a private seed that XRP wallets will accept,
+because the XRP wallets want to have a seed and then run the picture
+on the seed to get the private key.  But we don't have a seed, we have
+the private key itself.  So because of this, there is no `xprv2xrp.py`
+support and there never will be.
+
+To interact with the XRP chain without a wallet, somebody would have
+to implement a desktop/javascript client that accepts a private key
+(in some encoding, e.g. hex), instead of a seed.  And there is an
+implementation like that, here: http://ripplerm.github.io/ripple-wallet/
+
+So for XRP you have to use `xprv2xrphex.py` that is compatible with
+this tool.
+
+Example without passphrase:
+
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | ./xprv2xprv.py 0 | ./xprv2xrphex.py
+    58fe510ffea22709defc4a2c55d1054d2d37ef46bb4a728f38d6b3fbe112850b
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | ./xpub2xpub.py 0 | ./xpub2xrp.py
+    rH4b7nXtPgfjmtdfVLcY7qvMUFcMwLE5HX
+
+Example with passphrase:
+
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | ./xprv2xprv.py 0 | ./xprv2xrphex.py
+    dffefc577f9b97008f60592482d29d8da5a19b202b22f887d1b234df7c2edad2
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | ./xpub2xpub.py 0 | ./xpub2xrp.py
+    rhbZf6hesPYXX1VgBqCXjK6jvAAbiwL4T6
+
+Compatibility has been checked:
+  - Trezor One HAS NO SUPPORT for XRP on 2021-02-08,
+  - Ledger Nano S on 2021-02-08,
+  - http://ripplerm.github.io/ripple-wallet/ on 2021-02-08.
 
 # Generating the last word in the passphrase.
 
