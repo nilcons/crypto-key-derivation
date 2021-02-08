@@ -102,6 +102,8 @@ usually called "m" or "m/".
 
 `xpub2xpub.py`: stdin is an xpub, first arg is a number, output is the derived xpub
 
+`xpub2xpub-hardened.py`: intentionally doesn't exist, that's the point of hardening
+
 `xprv2btc.py`: stdin is an xprv, output is a BTC secret key.
 
 `xpub2btc.py`: stdin is an xpub, output is a BTC address, note that
@@ -113,6 +115,12 @@ this address must match the private key generated with
 `xpub2eth.py`: stdin is an xpub, output is an ETH address.  Easiest
 way to check if this is working correctly is to login into the secret
 key with myetherwallet and check the public key on the screen.
+
+`xprv2xrphex.py`: stdin is an xprv, output is an XRP secret key, usable with http://ripplerm.github.io/ripple-wallet/
+
+`xpub2xrp.py`: stdin is an xpub, output is an XRP address.
+
+`xprv2xlm.py`: stdin is an xprv, give stellar private key AND address. (see later)
 
 Examples:
 
