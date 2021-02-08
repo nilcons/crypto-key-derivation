@@ -190,7 +190,7 @@ Compatiblity with Electrum 2.9.3 has been verified on 2017-10-19.
 
 Compatiblity with Electrum 4.0.9 has been verified on 2021-02-08.
 
-# A full example for BTC+Trezor
+# A full example for BTC+Trezor/LedgerNanoS
 
 Given the following trezor seed: nation grab van ride cloth wash
 endless gorilla speed core dry shop raise later wedding sweet minimum
@@ -245,7 +245,14 @@ Get the private keys for the last 2 output:
   - segwit native + passphrase,
   - private key matches public key was checked for "segwit native + passphrase".
 
-# A full example of Trezor+ETH/ETC
+4 modes have been checked with Ledger Nano S on 2021-02-08:
+
+  - segwit + no passphrase,
+  - segwit + passphrase,
+  - segwit native + no passphrase,
+  - segwit native + passphrase.
+
+# A full example of ETH/ETC+Trezor/LedgerNanoS
 
 First 2 private keys for Ethereum and for Ethereum Classic without passphrase:
 
@@ -285,6 +292,7 @@ Addresses for these:
 
 Compatibility for all these use cases (ETH/ETC with or without passphrase) has been checked:
   - Trezor 2021-02-08,
+  - Ledger Nano S 2021-02-08,
   - myetherwallet.com 2021-02-08.
 
 # Generating the last word in the passphrase.
