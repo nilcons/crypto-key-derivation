@@ -1,6 +1,6 @@
 #!./venv/bin/python
 
-from electrum import bitcoin, util
+from electrum import bitcoin, bip32, util
 
 import sys
 
@@ -10,10 +10,10 @@ if len(lines) !=1:
     print("wrong input")
     sys.exit(1)
 
-_xtype, _depth, _fp, _cn, _c, K = bitcoin.deserialize_xpub(lines[0])
+node = bip32.BIP32Node.from_xkey(lines[0])
 type = "p2pkh"
 if len(sys.argv) == 2:
     type = sys.argv[1]
-pubkey = bitcoin.pubkey_to_address(type, util.bh2u(K))
+pubkey = bitcoin.pubkey_to_address(type, util.bh2u(node.eckey.get_public_key_bytes()))
 
 print(pubkey)

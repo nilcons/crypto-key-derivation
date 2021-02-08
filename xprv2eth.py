@@ -1,6 +1,6 @@
 #!./venv/bin/python
 
-from electrum import bitcoin, util
+from electrum import bip32, util
 
 import sys
 
@@ -10,7 +10,5 @@ if len(lines) !=1:
     print("wrong input")
     sys.exit(1)
 
-_xtype, _depth, _fp, _cn, _c, k = bitcoin.deserialize_xprv(lines[0])
-# privkey = bitcoin.serialize_privkey(k, True, "p2pkh")
-
+k = bip32.BIP32Node.from_xkey(lines[0]).eckey.get_secret_bytes()
 print(util.bh2u(k))

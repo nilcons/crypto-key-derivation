@@ -1,6 +1,6 @@
 #!./venv/bin/python
 
-from electrum import bitcoin
+from electrum import bip32
 
 import sys
 
@@ -10,4 +10,4 @@ if len(lines) !=1:
     print("wrong input")
     sys.exit(1)
 
-print(bitcoin.xpub_from_xprv(lines[0]))
+print(bip32.xpub_from_xprv(lines[0]))

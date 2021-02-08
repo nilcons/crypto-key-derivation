@@ -1,6 +1,6 @@
 #!./venv/bin/python
 
-from electrum import util, bitcoin
+from electrum import util, bip32
 
 import sys
 
@@ -11,5 +11,5 @@ if len(lines) !=1:
     sys.exit(1)
 
 seed = util.bfh(lines[0])
-xprv, _xpub = bitcoin.bip32_root(seed, "standard")
-print(xprv)
+node = bip32.BIP32Node.from_rootseed(seed, xtype = "standard")
+print(node.to_xprv())

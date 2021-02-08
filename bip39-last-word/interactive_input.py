@@ -26,8 +26,8 @@ def main():
     prng = coinchooser.PRNG(os.urandom(100))
     prng.shuffle(order)
 
-    wordlist = mnemonic.load_wordlist("english.txt")
-    
+    wordlist = mnemonic.Mnemonic().wordlist
+
     words = [""] * n
     for i in range(n):
         valid = False

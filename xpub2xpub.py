@@ -1,6 +1,6 @@
 #!./venv/bin/python
 
-from electrum import bitcoin
+from electrum import bip32
 
 import sys
 
@@ -11,6 +11,5 @@ if len(lines) !=1:
     sys.exit(1)
 
 index = int(sys.argv[1])
-xpub = bitcoin.bip32_public_derivation(lines[0], "", str(index))
-
-print(xpub)
+node = bip32.BIP32Node.from_xkey(lines[0])
+print(node.subkey_at_public_derivation(str(index)).to_xpub())

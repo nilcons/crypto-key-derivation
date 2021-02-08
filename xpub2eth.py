@@ -1,6 +1,6 @@
 #!./venv/bin/python
 
-from electrum import bitcoin, util
+from electrum import bip32, ecc, util
 from sha3 import keccak_256
 
 import sys
@@ -11,8 +11,8 @@ if len(lines) !=1:
     print("wrong input")
     sys.exit(1)
 
-_xtype, _depth, _fp, _cn, _c, K = bitcoin.deserialize_xpub(lines[0])
-# privkey = bitcoin.serialize_privkey(k, True, "p2pkh")
+K = bip32.BIP32Node.from_xkey(lines[0]).eckey.get_public_key_bytes()
+
 keccak = keccak_256()
-keccak.update(bitcoin.point_to_ser(bitcoin.ser_to_point(K), False)[1:])
+keccak.update(ecc.ECPubkey(K).get_public_key_bytes(compressed = False)[1:])
 print("0x" + keccak.hexdigest()[24:])

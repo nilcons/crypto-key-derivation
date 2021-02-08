@@ -6,7 +6,7 @@ import argparse
 import sys
 import os
 
-# We support only standard lengths 
+# We support only standard lengths
 # https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
 ACCEPTED_LENGTHS = [12, 15, 18, 21, 24]
 
@@ -38,7 +38,7 @@ def read_and_validate():
 def main():
     words = read_and_validate()
 
-    wordlist = mnemonic.load_wordlist("english.txt")
+    wordlist = mnemonic.Mnemonic().wordlist
     print("Good last words:")
     ok_words = []
     for last in wordlist:
