@@ -22,8 +22,7 @@ Finding out derivation paths:
 # Setup
 
     virtualenv -p python3 venv
-    venv/bin/pip install https://github.com/spesmilo/electrum/archive/42c10c2fecf5cc56d149b7d09ae2dddb36560624.tar.gz#sha256=69327086054e29d190c0d843a42874c5aaa8dc4f4f596603925308c2c8661a3a
-    venv/bin/pip install ipython pysha3 cryptography
+    venv/bin/pip install https://github.com/spesmilo/electrum/archive/42c10c2fecf5cc56d149b7d09ae2dddb36560624.tar.gz#sha256=69327086054e29d190c0d843a42874c5aaa8dc4f4f596603925308c2c8661a3a ipython pysha3 cryptography 'stellar-sdk==3.*'
 
 # BIP39
 Online tool: https://iancoleman.github.io/bip39/#english
@@ -49,12 +48,12 @@ english dictionary.  You do not have to use it if you don't want to:
 If you create a new wallet with Electrum, they use a modified version
 of BIP39, because they have some reasons how theirs is better...
 
-    $ ./mnemonic.py <<EOF
+    $ ./electrum_mnemonic.py <<EOF
         scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
         TREZOR
         EOF
     7d8b4005aa5e21e438057535a8a37944f5b110f3df91743bca22ffdcd2690fd1d83611d7740719199fa3e6093a756b2bf6a4e1975da733a114325733b056d86a
-    $ ./mnemonic.py <<EOF
+    $ ./electrum_mnemonic.py <<EOF
       scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
       EOF
     d27376868abe32360d112c0afd31298b0d5a91d895a3edebbccabb96a58161b67a2e7f35902d958bb3fedac0b818c87ce7e97b5309af612ee0a539ed029a107b
@@ -155,7 +154,7 @@ Electrum stores public addresses at "m/0/i" and change addresses at
 
 Therefore:
 
-    $ ./mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xprv2xprv.py 0 | ./xprv2xpub.py | { read xpub ; for i in `seq 0 19` ; do echo $xpub | ./xpub2xpub.py $i | ./xpub2btc.py ; done ; }
+    $ ./electrum_mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xprv2xprv.py 0 | ./xprv2xpub.py | { read xpub ; for i in `seq 0 19` ; do echo $xpub | ./xpub2xpub.py $i | ./xpub2btc.py ; done ; }
     19C8rUkmD1QG13qrpqypo3pEGuVMfEd8q5
     17p8unm85w7uDVpxhp16y6DKbJJT8S3ZgY
     1JkEikqjLMVpJLBUPwK3HqbTkMYN1tw6jg
@@ -179,7 +178,7 @@ Therefore:
 
 And for the change addresses:
 
-    $ ./mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xprv2xprv.py 1 | ./xprv2xpub.py | { read xpub ; for i in `seq 0 9` ; do echo $xpub | ./xpub2xpub.py $i | ./xpub2btc.py ; done ; }
+    $ ./electrum_mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xprv2xprv.py 1 | ./xprv2xpub.py | { read xpub ; for i in `seq 0 9` ; do echo $xpub | ./xpub2xpub.py $i | ./xpub2btc.py ; done ; }
     1MTWgVQQLEj8YMckR2p6CuXyc3AviAHkY5
     17TBRJy4NG6sqmfMYnKJ2bb7w7prb2mDAx
     1BTY3J6dqst3zYjQtpty3HGxomUAQ4D2Vv
@@ -294,6 +293,42 @@ Compatibility for all these use cases (ETH/ETC with or without passphrase) has b
   - Trezor 2021-02-08,
   - Ledger Nano S 2021-02-08,
   - myetherwallet.com 2021-02-08.
+
+# XLM (Stellar) + Trezor/LedgerNanoS
+
+Unfortunately XLM (Stellar) uses the BIP32 derivation a bit
+differently (because it uses the curve ed25519 instead of secp256k1).
+
+I don't understand the details and for now just hacked around the
+secp256k1 lib to somehow provide the result we need for XLM.  So
+beware of this part of the project, as it should be cleaned up and
+redone properly.  But it works! :)
+
+First keypair without passphrase:
+
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xprv2xprv-hardened-ed25519.py 44 | ./xprv2xprv-hardened-ed25519.py 148 | ./xprv2xprv-hardened-ed25519.py 0 | ./xprv2xlm.py 
+    SCGVFOJNHSOR55IAQQT2R6PFHEHCD3HVTB7PGTC3DNVL74LZQBYUBHAT
+    GD23O4PMK22FKSQECOOBOE3WUEPHTB2QKMALHZIADYREY3WGZFUBHNFX
+
+First keypair with passphrase:
+
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xprv2xprv-hardened-ed25519.py 44 | ./xprv2xprv-hardened-ed25519.py 148 | ./xprv2xprv-hardened-ed25519.py 0 | ./xprv2xlm.py
+    SB5UTCQCF3DO54PRN2TXDV2UGJR6UEBMNGMVFRWXMRM2U6W5WC7FJRNZ
+    GB7MHY2KDXUW6MY3PPACEOJOFSZ7EFDSY4L2C3Z4AF5VT7WPJ6R3KO3V
+
+Things to note:
+  - these hacky tools only work with xprvs and hardened paths, so no luck for the webshop usecases yet, :(
+  - as we only handle xprvs, the final xprv2xlm tool also prints the public key in the second line.
+
+These results have been validated with:
+  - Trezor One on 2021-02-08,
+  - Ledger Nano S on 2021-02-08.
+
+# TODO
+
+xrp (trezor no support, checked with ledgernano):
+ - rH4b7nXtPgfjmtdfVLcY7qvMUFcMwLE5HX
+ - with passphrase: rhbZf6hesPYXX1VgBqCXjK6jvAAbiwL4T6
 
 # Generating the last word in the passphrase.
 
