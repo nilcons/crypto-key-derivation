@@ -9,7 +9,7 @@ import sys
 
 def main():
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--check', action='store_true', default=False)
+    arg_parser.add_argument('--no-check', action='store_true', default=False)
     args = arg_parser.parse_args()
 
     lines = [x.strip() for x in sys.stdin.readlines()]
@@ -24,10 +24,10 @@ def main():
 
     words = lines[0]
 
-    if (args.check):
+    if not args.no_check:
         (checksum_ok, wordlist_ok) = keystore.bip39_is_checksum_valid(words)
         if not wordlist_ok:
-            print("Unkown words!", file=sys.stderr)
+            print("Unknown words!", file=sys.stderr)
             sys.exit(1)
         if not checksum_ok:
             print("Checksum NOT OK!", file=sys.stderr)
