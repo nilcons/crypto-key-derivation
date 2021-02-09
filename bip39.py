@@ -1,40 +1,33 @@
 #!./venv/bin/python
 
-from electrum import util, keystore
+from electrum import keystore
 
 import argparse
 import sys
 
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument('--no-check', action='store_true', default=False)
+args = arg_parser.parse_args()
 
+lines = [x.strip() for x in sys.stdin.readlines()]
 
-def main():
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--no-check', action='store_true', default=False)
-    args = arg_parser.parse_args()
+words = ""
+passw = ""
+if len(lines) == 2:
+    passw = lines[1]
+if not (len(lines) in [1, 2]):
+    print("wrong input", file=sys.stderr)
+    sys.exit(1)
 
-    lines = [x.strip() for x in sys.stdin.readlines()]
+words = lines[0]
 
-    words = ""
-    passw = ""
-    if len(lines) == 2:
-        passw = lines[1]
-    if not (len(lines) in [1, 2]):
-        print("wrong input", file=sys.stderr)
+if not args.no_check:
+    (checksum_ok, wordlist_ok) = keystore.bip39_is_checksum_valid(words)
+    if not wordlist_ok:
+        print("Unknown words!", file=sys.stderr)
+        sys.exit(1)
+    if not checksum_ok:
+        print("Checksum NOT OK!", file=sys.stderr)
         sys.exit(1)
 
-    words = lines[0]
-
-    if not args.no_check:
-        (checksum_ok, wordlist_ok) = keystore.bip39_is_checksum_valid(words)
-        if not wordlist_ok:
-            print("Unknown words!", file=sys.stderr)
-            sys.exit(1)
-        if not checksum_ok:
-            print("Checksum NOT OK!", file=sys.stderr)
-            sys.exit(1)
-
-    print(util.bh2u(keystore.bip39_to_seed(words, passw)))
-
-
-if __name__ == "__main__":
-  main()
+print(keystore.bip39_to_seed(words, passw).hex())
