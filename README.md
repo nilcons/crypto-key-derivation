@@ -15,14 +15,20 @@ BIP44: Just a bunch of recommendations on how to use BIP39+BIP32
 together.  This is followed by some wallets (e.g. Trezor), while not
 followed by others (e.g. Electrum).
 
-Finding out derivation paths:
+Finding out derivation paths and standards:
   - https://docs.trezor.io/trezor-firmware/misc/coins-bip44-paths.html
   - https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+  - https://github.com/trezor/trezor-firmware/tree/master/python/src/trezorlib
+  - https://github.com/satoshilabs/slips/blob/master/slip-0010/testvectors.py
 
 # Setup
 
-    virtualenv -p python3 venv
-    venv/bin/pip install https://github.com/spesmilo/electrum/archive/42c10c2fecf5cc56d149b7d09ae2dddb36560624.tar.gz#sha256=69327086054e29d190c0d843a42874c5aaa8dc4f4f596603925308c2c8661a3a ipython pysha3 cryptography 'stellar-sdk==3.*' pycrypto base58
+    rm -rf venv
+    virtualenv -p python3.9 venv
+    . venv/bin/activate
+    echo $PWD >venv/lib/python3.9/site-packages/crypto-key-derivation.pth
+    pip install -r requirements.txt
+    touch venv/lib/python3.9/site-packages/electrum/py.typed
 
 # BIP39
 Online tool: https://iancoleman.github.io/bip39/#english
