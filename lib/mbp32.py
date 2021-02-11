@@ -9,11 +9,10 @@
 # compatible way.
 
 from enum import Enum
-from typing import NamedTuple, Union
+from typing import NamedTuple
 
 from base58 import b58decode_check, b58encode_check
 from electrum import ecc
-from electrum.crypto import hash_160
 
 from lib import utils
 
@@ -23,6 +22,39 @@ class Version(Enum):
     PRIVATE = 0x0488ADE4
 
 
+class Key:
+    def get_public_bytes(self) -> bytes:
+        raise Exception("abstract")
+
+    def get_private_bytes(self) -> bytes:
+        raise Exception("abstract")
+
+
+class Secp256k1Pub(Key):
+    def __init__(self, key: ecc.ECPubkey):
+        self.key = key
+
+    def get_public_bytes(self):
+        return self.key.get_public_key_bytes(compressed=True)
+
+    def __str__(self):
+        return f"<Secp256k1Pub {self.key.__str__()}>"
+
+
+class Secp256k1Priv(Key):
+    def __init__(self, key: ecc.ECPrivkey):
+        self.key = key
+
+    def get_public_bytes(self):
+        return self.key.get_public_key_bytes(compressed=True)
+
+    def get_private_bytes(self):
+        return self.key.get_secret_bytes()
+
+    def __str__(self):
+        return f"<Secp256k1Priv {self.key.__str__()}>"
+
+
 class XKey(NamedTuple):
     version: Version
     depth: int
@@ -30,24 +62,24 @@ class XKey(NamedTuple):
     child_number: int
     hardened: bool
     chain_code: bytes
-    key: Union[ecc.ECPubkey, ecc.ECPrivkey]
+    key: Key
 
     @classmethod
     def from_xkey(cls, xkey: str) -> "XKey":
         xkey = b58decode_check(xkey)
         vrs = None
         key = xkey[13 + 32 :]
-        k = None
+        k: Key
         if len(key) != 33:
             raise Exception("Incorrect key length while parsing XKey")
         if xkey[0:4].hex() == "0488b21e":
             vrs = Version.PUBLIC
-            k = ecc.ECPubkey(key)
+            k = Secp256k1Pub(ecc.ECPubkey(key))
         elif xkey[0:4].hex() == "0488ade4":
             vrs = Version.PRIVATE
             if key[0] != 0:
                 raise Exception("Incorrect private key while parsing XKey")
-            k = ecc.ECPrivkey(key[1:])
+            k = Secp256k1Priv(ecc.ECPrivkey(key[1:]))
         else:
             raise Exception("Incorrect version while parsing XKey")
         d = xkey[4]
@@ -70,7 +102,7 @@ class XKey(NamedTuple):
             return f"{self.child_number}"
 
     def keyid(self):
-        return hash_160(self.key.get_public_key_bytes(compressed=True))
+        return utils.hash_160(self.key.get_public_bytes())
 
     def fp(self):
         return self.keyid()[:4]
@@ -84,10 +116,10 @@ class XKey(NamedTuple):
             cn += 0x80000000
         ret += utils.tb(cn, 4)
         ret += self.chain_code
-        if self.version == Version.PUBLIC and isinstance(self.key, ecc.ECPubkey):
-            ret += self.key.get_public_key_bytes()
-        elif self.version == Version.PRIVATE and isinstance(self.key, ecc.ECPrivkey):
-            ret += b"\x00" + self.key.get_secret_bytes()
+        if self.version == Version.PUBLIC:
+            ret += self.key.get_public_bytes()
+        elif self.version == Version.PRIVATE:
+            ret += b"\x00" + self.key.get_private_bytes()
         else:
             raise Exception("Incorrect version while dumping an XKey")
         return ret

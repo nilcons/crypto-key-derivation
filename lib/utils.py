@@ -4,6 +4,14 @@ import sys
 def sha256(b: bytes) -> bytes:
     return hashlib.sha256(b).digest()
 
+def ripemd(x):
+    md = hashlib.new('ripemd160')
+    md.update(x)
+    return md.digest()
+
+def hash_160(x: bytes) -> bytes:
+    return ripemd(sha256(x))
+
 def fb(b: bytes) -> int:
     return int.from_bytes(b, "big")
 
