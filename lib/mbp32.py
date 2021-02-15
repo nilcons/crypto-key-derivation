@@ -9,13 +9,13 @@
 # compatible way.
 
 from enum import Enum
-from typing import NamedTuple
+from typing import NamedTuple, Tuple
 
 from base58 import b58decode_check, b58encode_check
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
-from lib import utils
+from lib import secp256k1, utils
 
 
 class Version(Enum):
@@ -30,8 +30,30 @@ class Key:
     def get_private_bytes(self) -> bytes:
         raise Exception("abstract", self)
 
+    def hardened_derivation(self, chain_code: bytes, child_index: int) -> Tuple["Key", bytes]:
+        raise Exception("abstract", self)
 
-class Secp256k1Pub(Key):
+    def derivation(self, chain_code: bytes, child_index: int) -> Tuple["Key", bytes]:
+        raise Exception("abstract", self)
+
+
+# Derivation is similar for public and private bytes, so we try to abstract...
+# https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki
+class Secp256k1Deriv(Key):
+    def __init__(self, p1):
+        raise Exception("abstract", self)
+
+    def derive(self, il):
+        raise Exception("abstract", self)
+
+    def derivation(self, chain_code: bytes, child_index: int) -> Tuple["Secp256k1Deriv", bytes]:
+        if child_index < 0 or child_index >= 2 ** 31:
+            raise Exception("invalid child index")
+        I = utils.hmac512(chain_code, self.get_public_bytes() + utils.tb(child_index, 4))
+        return (self.__class__(self.derive(Secp256k1Priv(I[0:32]))), I[32:])
+
+
+class Secp256k1Pub(Secp256k1Deriv):
     def __init__(self, key: bytes):
         self.key = ec.EllipticCurvePublicKey.from_encoded_point(
             ec.SECP256K1(),
@@ -44,8 +66,14 @@ class Secp256k1Pub(Key):
     def get_public_bytes(self):
         return self.key.public_bytes(Encoding.X962, PublicFormat.CompressedPoint)
 
+    def hardened_derivation(self, *_args):
+        raise Exception("impossible")
 
-class Secp256k1Priv(Key):
+    def derive(self, il):
+        return secp256k1.add_pubkeys(self.get_public_bytes(), il.get_public_bytes())
+
+
+class Secp256k1Priv(Secp256k1Deriv):
     def __init__(self, key: bytes):
         self.key = ec.derive_private_key(int.from_bytes(key, "big"), ec.SECP256K1())
 
@@ -59,6 +87,15 @@ class Secp256k1Priv(Key):
         # I think this should be the supported API, but seems not to be working...
         # return self.key.private_bytes(Encoding.Raw, PrivateFormat.Raw, NoEncryption())
         return self.key.private_numbers().private_value.to_bytes(length=32, byteorder="big")
+
+    def hardened_derivation(self, chain_code: bytes, child_index: int) -> Tuple["Secp256k1Priv", bytes]:
+        if child_index < 0 or child_index >= 2 ** 31:
+            raise Exception("invalid hardened child index")
+        I = utils.hmac512(chain_code, b"\x00" + self.get_private_bytes() + utils.tb(child_index + 0x80000000, 4))
+        return (Secp256k1Priv(self.derive(Secp256k1Priv(I[0:32]))), I[32:])
+
+    def derive(self, il):
+        return secp256k1.add_privkeys(self.get_private_bytes(), il.get_private_bytes())
 
 
 class XKey(NamedTuple):
@@ -132,6 +169,24 @@ class XKey(NamedTuple):
 
     def to_xkey(self):
         return b58encode_check(self.to_bytes())
+
+    def neuter(self):
+        if not isinstance(self.key, Secp256k1Priv):
+            raise Exception("Only secp256k1 private xkeys can be neutered")
+        return XKey(Version.PUBLIC, self.depth, self.parent_fp, self.child_number, self.hardened, self.chain_code, Secp256k1Pub(self.key.get_public_bytes()))
+
+    def derivation(self, child_index: str):
+        if child_index[-1] in "hH'\"":
+            hardened = True
+            ci = int(child_index[:-1])
+        else:
+            hardened = False
+            ci = int(child_index)
+        if hardened:
+            k, cc = self.key.hardened_derivation(self.chain_code, ci)
+        else:
+            k, cc = self.key.derivation(self.chain_code, ci)
+        return XKey(self.version, self.depth + 1, self.fp(), ci, hardened, cc, k)
 
 
 if __name__ == "__main__":
