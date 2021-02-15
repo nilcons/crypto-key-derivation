@@ -12,7 +12,8 @@ from enum import Enum
 from typing import NamedTuple
 
 from base58 import b58decode_check, b58encode_check
-from electrum import ecc
+from cryptography.hazmat.primitives.asymmetric import ec
+from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 
 from lib import utils
 
@@ -24,35 +25,40 @@ class Version(Enum):
 
 class Key:
     def get_public_bytes(self) -> bytes:
-        raise Exception("abstract")
+        raise Exception("abstract", self)
 
     def get_private_bytes(self) -> bytes:
-        raise Exception("abstract")
+        raise Exception("abstract", self)
 
 
 class Secp256k1Pub(Key):
-    def __init__(self, key: ecc.ECPubkey):
-        self.key = key
-
-    def get_public_bytes(self):
-        return self.key.get_public_key_bytes(compressed=True)
+    def __init__(self, key: bytes):
+        self.key = ec.EllipticCurvePublicKey.from_encoded_point(
+            ec.SECP256K1(),
+            key,
+        )
 
     def __str__(self):
-        return f"<Secp256k1Pub {self.key.__str__()}>"
+        return f"<Secp256k1Pub {self.get_public_bytes().hex()}>"
+
+    def get_public_bytes(self):
+        return self.key.public_bytes(Encoding.X962, PublicFormat.CompressedPoint)
 
 
 class Secp256k1Priv(Key):
-    def __init__(self, key: ecc.ECPrivkey):
-        self.key = key
-
-    def get_public_bytes(self):
-        return self.key.get_public_key_bytes(compressed=True)
-
-    def get_private_bytes(self):
-        return self.key.get_secret_bytes()
+    def __init__(self, key: bytes):
+        self.key = ec.derive_private_key(int.from_bytes(key, "big"), ec.SECP256K1())
 
     def __str__(self):
-        return f"<Secp256k1Priv {self.key.__str__()}>"
+        return f"<Secp256k1Priv {self.get_public_bytes().hex()}>"
+
+    def get_public_bytes(self):
+        return self.key.public_key().public_bytes(Encoding.X962, PublicFormat.CompressedPoint)
+
+    def get_private_bytes(self):
+        # I think this should be the supported API, but seems not to be working...
+        # return self.key.private_bytes(Encoding.Raw, PrivateFormat.Raw, NoEncryption())
+        return self.key.private_numbers().private_value.to_bytes(length=32, byteorder="big")
 
 
 class XKey(NamedTuple):
@@ -74,12 +80,12 @@ class XKey(NamedTuple):
             raise Exception("Incorrect key length while parsing XKey")
         if xkey[0:4].hex() == "0488b21e":
             vrs = Version.PUBLIC
-            k = Secp256k1Pub(ecc.ECPubkey(key))
+            k = Secp256k1Pub(key)
         elif xkey[0:4].hex() == "0488ade4":
             vrs = Version.PRIVATE
             if key[0] != 0:
                 raise Exception("Incorrect private key while parsing XKey")
-            k = Secp256k1Priv(ecc.ECPrivkey(key[1:]))
+            k = Secp256k1Priv(key[1:])
         else:
             raise Exception("Incorrect version while parsing XKey")
         d = xkey[4]

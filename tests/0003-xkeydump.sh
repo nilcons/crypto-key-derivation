@@ -4,26 +4,26 @@ set -e
 set -o pipefail
 set -u
 
-cmp <(echo xprvA41z7zogVVwxVSgdKUHDy1SKmdb533PjDz7J6N6mV6uS3ze1ai8FHa8kmHScGpWmj4WggLyQjgPie1rFSruoUihUZREPSL39UNdE3BBDu76 | tools/xkeydump.py) <<EOF
+diff -u <(echo xprvA41z7zogVVwxVSgdKUHDy1SKmdb533PjDz7J6N6mV6uS3ze1ai8FHa8kmHScGpWmj4WggLyQjgPie1rFSruoUihUZREPSL39UNdE3BBDu76 | tools/xkeydump.py) - <<EOF
 PRIVATE(d880d7d8--5:1000000000-->d69aa102)
 Version: Version.PRIVATE
 Depth: 5
 Parent FP: d880d7d8
 Child number: 1000000000
 Chain code: c783e67b921d2beb8f6b389cc646d7263b4145701dadd2161548a8b078e65e9e
-Key: <Secp256k1Priv <ECPrivkey 022a471424da5e657499d1ff51cb43c47481a03b1e77f951fe64cec9f5a48f7011>>
+Key: <Secp256k1Priv 022a471424da5e657499d1ff51cb43c47481a03b1e77f951fe64cec9f5a48f7011>
 Key ID: d69aa102255fed74378278c7812701ea641fdf32
 XKey: xprvA41z7zogVVwxVSgdKUHDy1SKmdb533PjDz7J6N6mV6uS3ze1ai8FHa8kmHScGpWmj4WggLyQjgPie1rFSruoUihUZREPSL39UNdE3BBDu76
 EOF
 
-cmp <(echo xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy | tools/xkeydump.py)  <<EOF
+diff -u <(echo xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy | tools/xkeydump.py) - <<EOF
 PUBLIC(d880d7d8--5:1000000000-->d69aa102)
 Version: Version.PUBLIC
 Depth: 5
 Parent FP: d880d7d8
 Child number: 1000000000
 Chain code: c783e67b921d2beb8f6b389cc646d7263b4145701dadd2161548a8b078e65e9e
-Key: <Secp256k1Pub <ECPubkey 022a471424da5e657499d1ff51cb43c47481a03b1e77f951fe64cec9f5a48f7011>>
+Key: <Secp256k1Pub 022a471424da5e657499d1ff51cb43c47481a03b1e77f951fe64cec9f5a48f7011>
 Key ID: d69aa102255fed74378278c7812701ea641fdf32
 XKey: xpub6H1LXWLaKsWFhvm6RVpEL9P4KfRZSW7abD2ttkWP3SSQvnyA8FSVqNTEcYFgJS2UaFcxupHiYkro49S8yGasTvXEYBVPamhGW6cFJodrTHy
 EOF
