@@ -126,7 +126,10 @@ key with myetherwallet and check the public key on the screen.
 
 `xpub2xrp.py`: stdin is an xpub, output is an XRP address.
 
-`xprv2xlm.py`: stdin is an xprv, give stellar private key AND address. (see later)
+`seed2xprv-xlm.py`: same as `seed2xprv.py`, but have to use this one
+if you are generating XLM addresses.
+
+`x2xlm.py`: stdin is an xprv or an xpub, output is an XLM private key or address.
 
 Examples:
 
@@ -313,26 +316,35 @@ Compatibility for all these use cases (ETH/ETC with or without passphrase) has b
 Unfortunately XLM (Stellar) uses the BIP32 derivation a bit
 differently (because it uses the curve ed25519 instead of secp256k1).
 
-I don't understand the details and for now just hacked around the
-secp256k1 lib to somehow provide the result we need for XLM.  So
-beware of this part of the project, as it should be cleaned up and
-redone properly.  But it works! :)
+The ED25519 curve doesn't support the same trick regarding
+public-private derivations as Secp256k1.  (Although Cardano has an
+extension to make it happen, but that extension is not used by
+Stellar.)
+
+This means that with XLM, you will always have to use private hardened
+derivations and then only in the last step (before printing the
+address) can you go to xpub with `xprv2xpub.py`.
+
+Also note, that we had to extend the xpub/xprv format a bit, to
+represent the fact that the key is an ed25519 key, not a secp256k1, so
+the intermediate xprv/xpub strings might not be compatible with any
+other tool when using XLM.  If you find any RFC/SLIP/BIP that
+documents how to properly encode xprv/xpub for XLM, please contact us
+via Github.
 
 First keypair without passphrase:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xprv2xprv-hardened-ed25519.py 44 | ./xprv2xprv-hardened-ed25519.py 148 | ./xprv2xprv-hardened-ed25519.py 0 | ./xprv2xlm.py
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-xlm.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 148 | ./xprv2xprv-hardened.py 0 | ./x2xlm.py
     SCGVFOJNHSOR55IAQQT2R6PFHEHCD3HVTB7PGTC3DNVL74LZQBYUBHAT
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-xlm.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 148 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./x2xlm.py
     GD23O4PMK22FKSQECOOBOE3WUEPHTB2QKMALHZIADYREY3WGZFUBHNFX
 
 First keypair with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xprv2xprv-hardened-ed25519.py 44 | ./xprv2xprv-hardened-ed25519.py 148 | ./xprv2xprv-hardened-ed25519.py 0 | ./xprv2xlm.py
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-xlm.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 148 | ./xprv2xprv-hardened.py 0 | ./x2xlm.py
     SB5UTCQCF3DO54PRN2TXDV2UGJR6UEBMNGMVFRWXMRM2U6W5WC7FJRNZ
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-xlm.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 148 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./x2xlm.py
     GB7MHY2KDXUW6MY3PPACEOJOFSZ7EFDSY4L2C3Z4AF5VT7WPJ6R3KO3V
-
-Things to note:
-  - these hacky tools only work with xprvs and hardened paths, so no luck for the webshop usecases yet, :(
-  - as we only handle xprvs, the final xprv2xlm tool also prints the public key in the second line.
 
 Compatibility has been checked:
   - Trezor One on 2021-02-08,

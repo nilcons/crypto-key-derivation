@@ -12,9 +12,10 @@ from enum import Enum
 from typing import NamedTuple, Tuple
 
 from base58 import XRP_ALPHABET, b58decode_check, b58encode_check
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+from cryptography.hazmat.primitives.asymmetric import ec, ed25519
+from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat, PublicFormat
 from electrum import bitcoin
+from stellar_sdk.keypair import Keypair
 from web3 import Web3
 
 from lib import secp256k1, utils
@@ -100,6 +101,46 @@ class Secp256k1Priv(Secp256k1Deriv):
         return secp256k1.add_privkeys(self.get_private_bytes(), il.get_private_bytes())
 
 
+class ED25519Pub(Key):
+    def __init__(self, key: bytes):
+        self.key = ed25519.Ed25519PublicKey.from_public_bytes(key)
+
+    def __str__(self):
+        return f"<ED25519Pub {self.get_public_bytes().hex()}>"
+
+    def get_public_bytes(self):
+        return self.key.public_bytes(Encoding.Raw, PublicFormat.Raw)
+
+    def hardened_derivation(self, *_args):
+        raise Exception("impossible")
+
+    def derivation(self, *_args):
+        raise Exception("impossible, XLM doesn't support xpub derivation")
+
+
+class ED25519Priv(Key):
+    def __init__(self, key: bytes):
+        self.key = ed25519.Ed25519PrivateKey.from_private_bytes(key)
+
+    def __str__(self):
+        return f"<ED25519Priv {self.get_public_bytes().hex()}>"
+
+    def get_public_bytes(self):
+        return self.key.public_key().public_bytes(Encoding.Raw, PublicFormat.Raw)
+
+    def get_private_bytes(self):
+        return self.key.private_bytes(Encoding.Raw, PrivateFormat.Raw, NoEncryption())
+
+    def hardened_derivation(self, chain_code: bytes, child_index: int) -> Tuple["ED25519Priv", bytes]:
+        if child_index < 0 or child_index >= 2 ** 31:
+            raise Exception("invalid hardened child index")
+        I = utils.hmac512(chain_code, b"\x00" + self.get_private_bytes() + utils.tb(child_index + 0x80000000, 4))
+        return (ED25519Priv(I[0:32]), I[32:])
+
+    def derivation(self, *_args):
+        raise Exception("impossible, XLM doesn't support non-hardened derivation")
+
+
 class XKey(NamedTuple):
     version: Version
     depth: int
@@ -119,12 +160,20 @@ class XKey(NamedTuple):
             raise Exception("Incorrect key length while parsing XKey")
         if xkey[0:4].hex() == "0488b21e":
             vrs = Version.PUBLIC
-            k = Secp256k1Pub(key)
+            if key[0] == 255:
+                # non standard, invented by this project :(
+                k = ED25519Pub(key[1:])
+            else:
+                k = Secp256k1Pub(key)
         elif xkey[0:4].hex() == "0488ade4":
             vrs = Version.PRIVATE
-            if key[0] != 0:
+            if key[0] == 255:
+                # non standard, invented by this project :(
+                k = ED25519Priv(key[1:])
+            elif key[0] == 0:
+                k = Secp256k1Priv(key[1:])
+            else:
                 raise Exception("Incorrect private key while parsing XKey")
-            k = Secp256k1Priv(key[1:])
         else:
             raise Exception("Incorrect version while parsing XKey")
         d = xkey[4]
@@ -142,6 +191,11 @@ class XKey(NamedTuple):
         I = utils.hmac512(b"Bitcoin seed", seed)
         return XKey(Version.PRIVATE, 0, b"\x00\x00\x00\x00", 0, False, I[32:], Secp256k1Priv(I[0:32]))
 
+    @classmethod
+    def from_seed_ed25519(cls, seed: bytes) -> "XKey":
+        I = utils.hmac512(b"ed25519 seed", seed)
+        return XKey(Version.PRIVATE, 0, b"\x00\x00\x00\x00", 0, False, I[32:], ED25519Priv(I[0:32]))
+
     def __str__(self):
         return f"{self.version.name}({self.parent_fp.hex()}--{self.depth}:{self.child_number_with_tick()}-->{self.fp().hex()})"
 
@@ -157,7 +211,7 @@ class XKey(NamedTuple):
     def fp(self):
         return self.keyid()[:4]
 
-    def to_bytes(self) -> bytes:
+    def _to_bytes(self) -> bytes:
         ret = utils.tb(self.version.value, 4)
         ret += utils.tb(self.depth, 1)
         ret += self.parent_fp
@@ -167,20 +221,32 @@ class XKey(NamedTuple):
         ret += utils.tb(cn, 4)
         ret += self.chain_code
         if self.version == Version.PUBLIC:
-            ret += self.key.get_public_bytes()
+            if isinstance(self.key, ED25519Pub):
+                # non standard, invented by this project :(
+                ret += b"\xff" + self.key.get_public_bytes()
+            else:
+                ret += self.key.get_public_bytes()
         elif self.version == Version.PRIVATE:
-            ret += b"\x00" + self.key.get_private_bytes()
+            if isinstance(self.key, ED25519Priv):
+                # non standard, invented by this project :(
+                ret += b"\xff" + self.key.get_private_bytes()
+            else:
+                ret += b"\x00" + self.key.get_private_bytes()
         else:
             raise Exception("Incorrect version while dumping an XKey")
         return ret
 
     def to_xkey(self):
-        return b58encode_check(self.to_bytes())
+        return b58encode_check(self._to_bytes())
 
     def neuter(self):
-        if not isinstance(self.key, Secp256k1Priv):
-            raise Exception("Only secp256k1 private xkeys can be neutered")
-        return XKey(Version.PUBLIC, self.depth, self.parent_fp, self.child_number, self.hardened, self.chain_code, Secp256k1Pub(self.key.get_public_bytes()))
+        if isinstance(self.key, Secp256k1Priv):
+            return XKey(Version.PUBLIC, self.depth, self.parent_fp, self.child_number, self.hardened, self.chain_code, Secp256k1Pub(self.key.get_public_bytes()))
+        elif isinstance(self.key, ED25519Priv):
+            # Ed25519 doesn't support public derivation, so we zero out the chain code, to be safe
+            return XKey(Version.PUBLIC, self.depth, self.parent_fp, self.child_number, self.hardened, b"\x00" * 32, ED25519Pub(self.key.get_public_bytes()))
+        else:
+            raise Exception("Only secp256k1 or ed25519 private xkeys can be neutered")
 
     def derivation(self, child_index: str):
         if child_index[-1] in "hH'\"":
@@ -220,6 +286,13 @@ class XKey(NamedTuple):
             return "xrp-hex:" + self.key.get_private_bytes().hex()
         else:
             return b58encode_check(b"\x00" + utils.ripemd(utils.sha256(self.key.get_public_bytes())), XRP_ALPHABET).decode("ascii")
+
+    def to_xlm(self) -> str:
+        if self.version == Version.PRIVATE:
+            return Keypair.from_raw_ed25519_seed(self.key.get_private_bytes()).secret
+        else:
+            return Keypair.from_raw_ed25519_public_key(self.key.get_public_bytes()).public_key
+
 
 if __name__ == "__main__":
     # This is xprv from "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst"
