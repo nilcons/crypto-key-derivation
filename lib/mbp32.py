@@ -11,7 +11,7 @@
 from enum import Enum
 from typing import NamedTuple, Tuple
 
-from base58 import b58decode_check, b58encode_check
+from base58 import XRP_ALPHABET, b58decode_check, b58encode_check
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from electrum import bitcoin
@@ -215,6 +215,11 @@ class XKey(NamedTuple):
             else:
                 raise NotImplementedError("eth addr from non-public secp256k1")
 
+    def to_xrp(self) -> str:
+        if self.version == Version.PRIVATE:
+            return "xrp-hex:" + self.key.get_private_bytes().hex()
+        else:
+            return b58encode_check(b"\x00" + utils.ripemd(utils.sha256(self.key.get_public_bytes())), XRP_ALPHABET).decode("ascii")
 
 if __name__ == "__main__":
     # This is xprv from "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst"

@@ -122,7 +122,7 @@ this address must match the private key generated with
 way to check if this is working correctly is to login into the secret
 key with myetherwallet and check the public key on the screen.
 
-`xprv2xrphex.py`: stdin is an xprv, output is an XRP secret key, usable with http://ripplerm.github.io/ripple-wallet/
+`xprv2xrp.py`: stdin is an xprv, output is an XRP secret key, usable with http://ripplerm.github.io/ripple-wallet/
 
 `xpub2xrp.py`: stdin is an xpub, output is an XRP address.
 
@@ -354,30 +354,33 @@ not used at all.
 This means that XRP is a very weird crypto regarding BIP32: I can
 generate you the public key that will be the same as Ledger Nano's
 key, but I can't give you a private seed that XRP wallets will accept,
-because the XRP wallets want to have a seed and then run the picture
-on the seed to get the private key.  But we don't have a seed, we have
-the private key itself.  So because of this, there is no `xprv2xrp.py`
-support and there never will be.
+because the XRP wallets want to have a seed and then run the algorithm
+in the above picture on the seed to get the private key.  But we don't
+have a seed, we have the private key itself.  So because of this, the
+`xprv2xrp.py` tool will never be able to give you a seed usable with
+native XRP tools.
 
-To interact with the XRP chain without a wallet, somebody would have
-to implement a desktop/javascript client that accepts a private key
-(in some encoding, e.g. hex), instead of a seed.  And there is an
-implementation like that, here: http://ripplerm.github.io/ripple-wallet/
+To interact with the XRP chain without a hardware wallet, somebody
+would have to implement a desktop/javascript client that accepts a
+private key (in some encoding, e.g. hex), instead of a seed.  And
+there is an implementation like that, here:
+http://ripplerm.github.io/ripple-wallet/
 
-So for XRP you have to use `xprv2xrphex.py` that is compatible with
-this tool.
+So in an emergency, when you don't have a hardware wallet, and still
+want to do XRP transactions with your private key, you have to use
+this web tool, since it's compatible with our `xprv2xrp.py` hex output.
 
 Example without passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | ./xprv2xprv.py 0 | ./xprv2xrphex.py
-    58fe510ffea22709defc4a2c55d1054d2d37ef46bb4a728f38d6b3fbe112850b
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | ./xprv2xprv.py 0 | ./xprv2xrp.py
+    xrp-hex:58fe510ffea22709defc4a2c55d1054d2d37ef46bb4a728f38d6b3fbe112850b
     $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | ./xpub2xpub.py 0 | ./xpub2xrp.py
     rH4b7nXtPgfjmtdfVLcY7qvMUFcMwLE5HX
 
 Example with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | ./xprv2xprv.py 0 | ./xprv2xrphex.py
-    dffefc577f9b97008f60592482d29d8da5a19b202b22f887d1b234df7c2edad2
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | ./xprv2xprv.py 0 | ./xprv2xrp.py
+    xrp-hex:dffefc577f9b97008f60592482d29d8da5a19b202b22f887d1b234df7c2edad2
     $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | ./xpub2xpub.py 0 | ./xpub2xrp.py
     rhbZf6hesPYXX1VgBqCXjK6jvAAbiwL4T6
 
