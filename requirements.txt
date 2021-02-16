@@ -1,6 +1,8 @@
 cryptography
 stellar-sdk==3.*
 https://github.com/spesmilo/electrum/archive/42c10c2fecf5cc56d149b7d09ae2dddb36560624.tar.gz#sha256=69327086054e29d190c0d843a42874c5aaa8dc4f4f596603925308c2c8661a3a
+https://github.com/pooler/electrum-ltc/archive/7f462391a686c5ee8d23fb6f43fd5bc99b193841.tar.gz#sha256=e1ee194b7bb23bb619eb15b20742de51782f1dfde60d2d066abb83f5a9c73b8e
+scrypt
 ed25519
 web3
 

@@ -33,6 +33,7 @@ Useful docs derivation paths and standards:
     echo $PWD >venv/lib/python3.9/site-packages/crypto-key-derivation.pth
     pip install -r requirements.txt
     touch venv/lib/python3.9/site-packages/electrum/py.typed
+    touch venv/lib/python3.9/site-packages/electrum_ltc/py.typed
 
 # BIP39
 Online tool: https://iancoleman.github.io/bip39/#english
@@ -268,6 +269,52 @@ Get the private keys for the last 2 output:
   - segwit + passphrase,
   - segwit native + no passphrase,
   - segwit native + passphrase.
+
+# A full example for LTC+Trezor/LedgerNanoS
+
+Legacy address and it's secret key:
+
+    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h n 0 0 |./x2ltc.py
+    LRZrQayJyVWwQQw9VRVz1uDq3y42pwzLu7
+    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h 0 0 |./x2ltc.py
+    p2pkh:TAFkrmCtXjVUMXJdthrspNi3Km3dQkq2VFixFGNERs83VtM9kArH
+
+Segwit address and it's secret key:
+
+    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 |./x2ltc.py p2wpkh-p2sh
+    p2wpkh-p2sh:T7bFZEhuwmcRF3eaYHyuDeEJLaU549KKBoKUL3Exhf9Kaa9TAQJq
+    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 n |./x2ltc.py p2wpkh-p2sh
+    MKMPWJ4t5h3sbZTYgPraevEYqecQKSz46Z
+
+Native segwit address and it's secret key:
+
+    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 |./x2ltc.py p2wpkh
+    p2wpkh:T5J1kC22CWCZeDnhaKm7qWa3Ur5xk9SfRKw4iVm784qMLD3F5B7Z
+    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 n |./x2ltc.py p2wpkh
+    ltc1qcnwyxrceaz50ygfdqxd3at48j474sxtsnpz8y3
+
+Same tests with passphrase:
+
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\nabc" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h 0 0 n |./x2ltc.py
+    LduZ8dL5REw7NnhNx9j5qBwdUfqPP9Sb4f
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\nabc" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 n |./x2ltc.py p2wpkh-p2sh
+    MG6vu3q25343H9JHkn3jAXffKsJbLua2Vx
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\nabc" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 n |./x2ltc.py p2wpkh
+    ltc1qhqw64frfanzsktas5xtykpz0gxszzljrcwlmzz
+
+4 modes have been checked with Ledger Nano S on 2021-02-16:
+  - legacy NOT SUPPORTED by Ledger Nano S,
+  - segwit + no passphrase,
+  - segwit + passphrase,
+  - native segwit + no passphrase,
+  - native segwit + passphrase.
+
+4 modes have been checked with Trezor One on 2021-02-16:
+  - native segwit NOT SUPPORTED by Trezor One,
+  - legacy + no passphrase,
+  - legacy + passphrase.
+  - segwit + no passphrase,
+  - segwit + passphrase.
 
 # A full example of ETH/ETC+Trezor/LedgerNanoS
 

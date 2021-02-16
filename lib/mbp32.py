@@ -15,6 +15,7 @@ from base58 import XRP_ALPHABET, b58decode_check, b58encode_check
 from cryptography.hazmat.primitives.asymmetric import ec, ed25519
 from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat, PublicFormat
 from electrum import bitcoin
+from electrum_ltc import bitcoin as litecoin
 from eth_utils.crypto import keccak
 from stellar_sdk.keypair import Keypair
 from web3 import Web3
@@ -272,6 +273,12 @@ class XKey(NamedTuple):
             return bitcoin.serialize_privkey(self.key.get_private_bytes(), True, type)
         else:
             return bitcoin.pubkey_to_address(type, self.key.get_public_bytes().hex())
+
+    def to_ltc(self, type: str) -> str:
+        if self.version == Version.PRIVATE:
+            return litecoin.serialize_privkey(self.key.get_private_bytes(), True, type)
+        else:
+            return litecoin.pubkey_to_address(type, self.key.get_public_bytes().hex())
 
     def to_eth(self) -> str:
         if self.version == Version.PRIVATE:
