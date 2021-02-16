@@ -3,7 +3,11 @@ Document all the mess around bip32+bip39+bip44 and similar key generation scheme
 
 # Overview
 Our overall goal is to generate bitcoin/litecon/ethereum/etc
-private+public keys from a list of english words.
+private+public keys from a list of english words.  We also want to
+keep compatibility with hardware wallets (Trezor One and Ledger Nano
+S), so we can use this tool in an emergency when a hardware wallet is
+not available.  If you want other hardware wallets to be tested too,
+feel free to donate.
 
 BIP39: Given a list of words, generate a seed (512 bit),
 https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki
@@ -15,7 +19,7 @@ BIP44: Just a bunch of recommendations on how to use BIP39+BIP32
 together.  This is followed by some wallets (e.g. Trezor), while not
 followed by others (e.g. Electrum).
 
-Finding out derivation paths and standards:
+Useful docs derivation paths and standards:
   - https://docs.trezor.io/trezor-firmware/misc/coins-bip44-paths.html
   - https://github.com/satoshilabs/slips/blob/master/slip-0044.md
   - https://github.com/trezor/trezor-firmware/tree/master/python/src/trezorlib
@@ -36,9 +40,9 @@ Online tool: https://iancoleman.github.io/bip39/#english
 The standard BIP39 seed derivation can be used like this:
 
     $ ./bip39.py <<EOF
-        scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
-        TREZOR
-        EOF
+      scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
+      TREZOR
+      EOF
     7b4a10be9d98e6cba265566db7f136718e1398c71cb581e1b2f464cac1ceedf4f3e274dc270003c670ad8d02c4558b2f8e39edea2775c9e232c7cb798b069e88
 
 The string "TREZOR" here is the so called passphrase, which in BIP39
@@ -55,9 +59,9 @@ If you create a new wallet with Electrum, they use a modified version
 of BIP39, because they have some reasons how theirs is better...
 
     $ ./electrum_mnemonic.py <<EOF
-        scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
-        TREZOR
-        EOF
+      scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
+      TREZOR
+      EOF
     7d8b4005aa5e21e438057535a8a37944f5b110f3df91743bca22ffdcd2690fd1d83611d7740719199fa3e6093a756b2bf6a4e1975da733a114325733b056d86a
     $ ./electrum_mnemonic.py <<EOF
       scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
@@ -85,7 +89,7 @@ keys.  Subnodes are indexed from 0 to 2^31-1.
 This means that as far as you are using non-hardened derivation paths,
 you can generate all the valid public keys from the root without
 knowing any of the secrets.  This can be used to gather balances
-without having the ability to spend them.
+without having the ability to spend them (e.g. webshop).
 
 The standard notation of a path in the tree is like this:
 "m/44'/0'/0'/1/3".  Here we generating the root from a seed and then
@@ -102,13 +106,13 @@ usually called "m" or "m/".
 
 `xprv2xpub.py`: stdin is an xprv, output is an xpub.
 
-`xprv2xprv.py`: stdin is an xprv, first arg is a number, output is the derived xprv
+`xprv2xprv.py`: stdin is an xprv, first arg is a number, output is the derived xprv.
 
-`xprv2xprv-hardened.py`: stdin is an xprv, first arg is a number, output is the derived xprv
+`xprv2xprv-hardened.py`: stdin is an xprv, first arg is a number, output is the derived xprv.
 
-`xpub2xpub.py`: stdin is an xpub, first arg is a number, output is the derived xpub
+`xpub2xpub.py`: stdin is an xpub, first arg is a number, output is the derived xpub.
 
-`xpub2xpub-hardened.py`: intentionally doesn't exist, that's the point of hardening
+`xpub2xpub-hardened.py`: intentionally doesn't exist, that's the point of hardening.
 
 `xprv2btc.py`: stdin is an xprv, output is a BTC secret key.
 
