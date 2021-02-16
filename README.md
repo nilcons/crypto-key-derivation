@@ -91,6 +91,11 @@ you can generate all the valid public keys from the root without
 knowing any of the secrets.  This can be used to gather balances
 without having the ability to spend them (e.g. webshop).
 
+Math warning: anyone who has the extended public key, and just ONE
+(non-extended, normal) secret key, can calculate all the secret keys
+in the whole hierarcy (up and down and sideways), until a hardening
+boundary is met.
+
 The standard notation of a path in the tree is like this:
 "m/44'/0'/0'/1/3".  Here we generating the root from a seed and then
 taking the path of: harden 44 -> harden 0 -> harden 0 -> non-harden 1
@@ -107,15 +112,14 @@ usually called "m" or "m/".
 `seed2xprv-xlm.py`: same as `seed2xprv.py`, but have to use this one
 if you are generating XLM addresses.
 
-`xprv2xpub.py`: stdin is an xprv, output is an xpub.
+`xderive.py 10`: stdin is an xprv/xpub, output is the xprv/xpub of
+10th child on the next level.
 
-`xprv2xprv.py`: stdin is an xprv, first arg is a number, output is the derived xprv.
+`xderive.py 10h`: stdin is an xprv/xpub, output is the xprv/xpub of
+10th hardened child on the next level.
 
-`xprv2xprv-hardened.py`: stdin is an xprv, first arg is a number, output is the derived xprv.
-
-`xpub2xpub.py`: stdin is an xpub, first arg is a number, output is the derived xpub.
-
-`xpub2xpub-hardened.py`: intentionally doesn't exist, that's the point of hardening.
+`xderive.py n`: stdin is an xprv, output is the xpub (that doesn't
+have the secret anymore).
 
 `x2btc.py`: stdin is an xprv/xpub, output is a BTC secret key or
 address.  You can use https://www.bitaddress.org/ to check the keypair.
@@ -132,26 +136,26 @@ Examples:
 
     $ ./seed2xprv.py <<< 000102030405060708090a0b0c0d0e0f
     xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi
-    $ ./xprv2xpub.py <<< xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi
+    $ ./xderive.py n <<< xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi
     xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8
-    $ ./xprv2xprv.py 0 <<< xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U
+    $ ./xderive.py 0 <<< xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U
     xprv9vHkqa6EV4sPZHYqZznhT2NPtPCjKuDKGY38FBWLvgaDx45zo9WQRUT3dKYnjwih2yJD9mkrocEZXo1ex8G81dwSM1fwqWpWkeS3v86pgKt
-    $ echo "xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U" | ./xprv2xprv.py 0 | ./xprv2xpub.py
+    $ echo "xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U" | ./xderive.py 0 n
     xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmXUbC6wb7ERfvrnKZjXoUmmDznezpbZb7ap6r1D3tgFxHmwMkQTPH
-    $ ./xprv2xprv-hardened.py 2147483647 <<< xprv9vHkqa6EV4sPZHYqZznhT2NPtPCjKuDKGY38FBWLvgaDx45zo9WQRUT3dKYnjwih2yJD9mkrocEZXo1ex8G81dwSM1fwqWpWkeS3v86pgKt
+    $ ./xderive.py 2147483647h <<< xprv9vHkqa6EV4sPZHYqZznhT2NPtPCjKuDKGY38FBWLvgaDx45zo9WQRUT3dKYnjwih2yJD9mkrocEZXo1ex8G81dwSM1fwqWpWkeS3v86pgKt
     xprv9wSp6B7kry3Vj9m1zSnLvN3xH8RdsPP1Mh7fAaR7aRLcQMKTR2vidYEeEg2mUCTAwCd6vnxVrcjfy2kRgVsFawNzmjuHc2YmYRmagcEPdU9
-    $ ./xpub2xpub.py 1 <<< xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyBLZ85ySDhKiLDBrQSARLq1uNRts8RuJiHjaDMBU4Zn9h8LZNnBC5y4a
+    $ ./xderive.py 1 <<< xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyBLZ85ySDhKiLDBrQSARLq1uNRts8RuJiHjaDMBU4Zn9h8LZNnBC5y4a
     xpub6DF8uhdarytz3FWdA8TvFSvvAh8dP3283MY7p2V4SeE2wyWmG5mg5EwVvmdMVCQcoNJxGoWaU9DCWh89LojfZ537wTfunKau47EL2dhHKon
     $ ./x2btc.py <<< xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP
     p2pkh:L15hj1TsQC1eCnMwd4CkZTGh8iusyHjDtz2oNL968oPz9dXGEeP4
-    $ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xprv2xpub.py | ./x2btc.py
+    $ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xderive.py n | ./x2btc.py
     19C8rUkmD1QG13qrpqypo3pEGuVMfEd8q5
 
 You can also get segwit addresses or P2SH compatible segwit addresses:
 
-    $ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xprv2xpub.py | ./x2btc.py p2wpkh
+    $ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xderive.py n | ./x2btc.py p2wpkh
     bc1qt8wzxfq4p2ufpumd6w02p7kdr5c7uaqeekmeje
-    $ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./x2btc.py p2wpkh-p2sh
+    $ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xderive.py n | ./x2btc.py p2wpkh-p2sh
     37GxRVzwaiQ7vdZbVJpmfG64gy8tWWomFz
 
 Note, that for P2SH and legacy the casing of the address is important,
@@ -168,7 +172,7 @@ Electrum stores public addresses at "m/0/i" and change addresses at
 
 Therefore:
 
-    $ ./electrum_mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xprv2xprv.py 0 | ./xprv2xpub.py | { read xpub ; for i in `seq 0 19` ; do echo $xpub | ./xpub2xpub.py $i | ./x2btc.py ; done ; }
+    $ ./electrum_mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xderive.py 0 n | { read xpub ; for i in `seq 0 19` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
     19C8rUkmD1QG13qrpqypo3pEGuVMfEd8q5
     17p8unm85w7uDVpxhp16y6DKbJJT8S3ZgY
     1JkEikqjLMVpJLBUPwK3HqbTkMYN1tw6jg
@@ -192,7 +196,7 @@ Therefore:
 
 And for the change addresses:
 
-    $ ./electrum_mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xprv2xprv.py 1 | ./xprv2xpub.py | { read xpub ; for i in `seq 0 9` ; do echo $xpub | ./xpub2xpub.py $i | ./x2btc.py ; done ; }
+    $ ./electrum_mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xderive.py 1 n | { read xpub ; for i in `seq 0 4` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
     1MTWgVQQLEj8YMckR2p6CuXyc3AviAHkY5
     17TBRJy4NG6sqmfMYnKJ2bb7w7prb2mDAx
     1BTY3J6dqst3zYjQtpty3HGxomUAQ4D2Vv
@@ -212,32 +216,32 @@ rifle market inside have ill true analyst
 You can generate the first 2 addresses of the first legacy, segwit and
 native segwit account like this:
 
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xpub2xpub.py $i | ./x2btc.py ; done ; }
+    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
     1GhzX8gLBfG96Qg1mk9S5ckhVPsxeeBiSC
     18sRn1xohBhxHH9XZHgFBmZmuH5cUWpWwz
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 49 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xpub2xpub.py $i | ./x2btc.py p2wpkh-p2sh ; done ; }
+    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh-p2sh ; done ; }
     39Fh4GYAW5QWuT118vYMhfatQtz5UcTaa7
     38xnPRH891kEGkqQKi7yF3uPACGksjp56B
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 84 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xpub2xpub.py $i | ./x2btc.py p2wpkh ; done ; }
+    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh ; done ; }
     bc1q4qfcaq4fzcn3q5tvksds4e00hs45fcu6pznsy8
     bc1qgwtfdq3jzv2324hy7l9575x73sjmgky0ky08fk
 
 Or if you have a secret wallet with the passphrase of "do not
 show my wife", then you can get the addresses like this:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xpub2xpub.py $i | ./x2btc.py ; done ; }
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
     1Hvv8XyMtT8QGAXLTRE1bgEYbpfj7bZmN9
     1JiWHCAHmzsfJcag78339H1UNbkgb7cyTz
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 49 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xpub2xpub.py $i | ./x2btc.py p2wpkh-p2sh ; done ; }
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh-p2sh ; done ; }
     3FdXjsy32tZdrma6WvApUvFwFv8oNhPnp1
     3AuVfCnp19R8Eoa5CZXeGJjU1TQDy6fW58
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 84 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xpub2xpub.py $i | ./x2btc.py p2wpkh ; done ; }
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh ; done ; }
     bc1q3jl5dkp57fgs3uxcyz56dpdgv7d3pg00jvlxc3
     bc1q7u0hytrgmd6xllkrz0npflcpzukjdktg6zuu6v
 
 Get the private keys for the last 2 output:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 84 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./x2btc.py p2wpkh ; done ; }
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 0h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh ; done ; }
     p2wpkh:Kwo5JqiLtw3ktrzQ3aqqJ3hoVfNcgCJZZ7TCbvrXjhz8tqQNPrQu
     p2wpkh:L1cc4Q1UTmzgcE8p7pgNX4pnekyejbDfXbH1rh3WHTpTdgVbmJmq
 
@@ -269,37 +273,37 @@ Get the private keys for the last 2 output:
 
 First 2 private keys for Ethereum and for Ethereum Classic without passphrase:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 60 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./x2eth.py ; done ; }
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 60h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
     bb36972e4db24cffd1dba3342c4c801c3344fe429500bdba192e2f49673f9139
     6a72d0345f06270cabe20f8f218f25073108586bc81c985eaa02a27533949a35
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 61 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./x2eth.py ; done ; }
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 61h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
     fc265563c97398fc26f6e47eda38827f865dead4f853f2f571654f4eaf6667f0
     31a6315abcc2fdcb47c14eea6d7c1b357cfdfe17674f34f43af7722d87d2350d
 
 Addresses for these:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 60 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./xprv2xpub.py | ./x2eth.py ; done ; }
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 60h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
     0x154D15BB73A7c01a208D3b7fEB1d77cd65756f86
     0xf8dFcB912129C22Db155Fb861D6F7A9DdDAEe0Be
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 61 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./xprv2xpub.py | ./x2eth.py ; done ; }
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 61h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
     0x919903583020fb1dc543284bcD75d4737baD415A
     0x3e605cD53A01Cbe4604f4C750855874CC90D6116
 
 First 2 private keys for Ethereum and for Ethereum Classic with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 60 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./x2eth.py ; done ; }
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 60h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
     be080f5d5bd51985b05b001159a1bb5676309006577e0c2711658b96face6c57
     115bf63c5495145d99434db3408cb323664c427c45a0a46b5b5e5a6dadc70ab1
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 61 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./x2eth.py ; done ; }
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 61h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
     8c7e65a7d43fbfca98ad6127511fd41a4d3ebc6adc976d8239bdc8f18e2b3e7d
     21f8616e3f200fdc7054565a7be929acf91ebd884b7244ea8727a7d9393d4820
 
 Addresses for these:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 60 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./xprv2xpub.py | ./x2eth.py ; done ; }
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 60h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
     0xc629c12cea4a2Cf61286F46649282f482A872bbd
     0x961b12F54a3132b4EaA6108349FeBC90531B2bbb
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 61 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./xprv2xpub.py | ./x2eth.py ; done ; }
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 61h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
     0xACAA32F9dD8c6a028A78140bFCe50dCEcAA74554
     0xd01629D284C7d7d7D261d5F847328B23645Fb7E0
 
@@ -331,16 +335,16 @@ via Github.
 
 First keypair without passphrase:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-xlm.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 148 | ./xprv2xprv-hardened.py 0 | ./x2xlm.py
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-xlm.py | ./xderive.py 44h 148h 0h | ./x2xlm.py
     SCGVFOJNHSOR55IAQQT2R6PFHEHCD3HVTB7PGTC3DNVL74LZQBYUBHAT
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-xlm.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 148 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./x2xlm.py
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-xlm.py | ./xderive.py 44h 148h 0h n | ./x2xlm.py
     GD23O4PMK22FKSQECOOBOE3WUEPHTB2QKMALHZIADYREY3WGZFUBHNFX
 
 First keypair with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-xlm.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 148 | ./xprv2xprv-hardened.py 0 | ./x2xlm.py
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-xlm.py | ./xderive.py 44h 148h 0h | ./x2xlm.py
     SB5UTCQCF3DO54PRN2TXDV2UGJR6UEBMNGMVFRWXMRM2U6W5WC7FJRNZ
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-xlm.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 148 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./x2xlm.py
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-xlm.py | ./xderive.py 44h 148h 0h n | ./x2xlm.py
     GB7MHY2KDXUW6MY3PPACEOJOFSZ7EFDSY4L2C3Z4AF5VT7WPJ6R3KO3V
 
 Compatibility has been checked:
@@ -381,16 +385,16 @@ this web tool, since it's compatible with our `x2xrp.py` hex output.
 
 Example without passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | ./xprv2xprv.py 0 | ./x2xrp.py
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 | ./x2xrp.py
     xrp-hex:58fe510ffea22709defc4a2c55d1054d2d37ef46bb4a728f38d6b3fbe112850b
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | ./xpub2xpub.py 0 | ./x2xrp.py
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 n | ./x2xrp.py
     rH4b7nXtPgfjmtdfVLcY7qvMUFcMwLE5HX
 
 Example with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | ./xprv2xprv.py 0 | ./x2xrp.py
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 | ./x2xrp.py
     xrp-hex:dffefc577f9b97008f60592482d29d8da5a19b202b22f887d1b234df7c2edad2
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 144 | ./xprv2xprv-hardened.py 0 | ./xprv2xpub.py | ./xpub2xpub.py 0 | ./xpub2xpub.py 0 | ./x2xrp.py
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 n | ./x2xrp.py
     rhbZf6hesPYXX1VgBqCXjK6jvAAbiwL4T6
 
 Compatibility has been checked:
