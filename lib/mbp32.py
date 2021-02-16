@@ -15,6 +15,7 @@ from base58 import b58decode_check, b58encode_check
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
 from electrum import bitcoin
+from web3 import Web3
 
 from lib import secp256k1, utils
 
@@ -204,6 +205,15 @@ class XKey(NamedTuple):
             return bitcoin.serialize_privkey(self.key.get_private_bytes(), True, type)
         else:
             return bitcoin.pubkey_to_address(type, self.key.get_public_bytes().hex())
+
+    def to_eth(self) -> str:
+        if self.version == Version.PRIVATE:
+            return self.key.get_private_bytes().hex()
+        else:
+            if isinstance(self.key, Secp256k1Pub):
+                return Web3.toChecksumAddress(utils.keccak256(self.key.key.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)[1:])[24:])
+            else:
+                raise NotImplementedError("eth addr from non-public secp256k1")
 
 
 if __name__ == "__main__":

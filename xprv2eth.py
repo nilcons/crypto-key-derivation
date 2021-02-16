@@ -1,14 +1,6 @@
 #!./venv/bin/python
 
-from electrum import bip32, util
+from lib import mbp32, utils
 
-import sys
-
-lines = [x.strip() for x in sys.stdin.readlines()]
-
-if len(lines) !=1:
-    print("wrong input")
-    sys.exit(1)
-
-k = bip32.BIP32Node.from_xkey(lines[0]).eckey.get_secret_bytes()
-print(util.bh2u(k))
+xkey = mbp32.XKey.from_xkey(utils.one_line_from_stdin())
+print(xkey.to_eth())

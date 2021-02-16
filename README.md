@@ -279,11 +279,11 @@ First 2 private keys for Ethereum and for Ethereum Classic without passphrase:
 Addresses for these:
 
     $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 60 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./xprv2xpub.py | ./xpub2eth.py ; done ; }
-    0x154d15bb73a7c01a208d3b7feb1d77cd65756f86
-    0xf8dfcb912129c22db155fb861d6f7a9dddaee0be
+    0x154D15BB73A7c01a208D3b7fEB1d77cd65756f86
+    0xf8dFcB912129C22Db155Fb861D6F7A9DdDAEe0Be
     $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 61 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./xprv2xpub.py | ./xpub2eth.py ; done ; }
-    0x919903583020fb1dc543284bcd75d4737bad415a
-    0x3e605cd53a01cbe4604f4c750855874cc90d6116
+    0x919903583020fb1dc543284bcD75d4737baD415A
+    0x3e605cD53A01Cbe4604f4C750855874CC90D6116
 
 First 2 private keys for Ethereum and for Ethereum Classic with passphrase:
 
@@ -297,11 +297,11 @@ First 2 private keys for Ethereum and for Ethereum Classic with passphrase:
 Addresses for these:
 
     $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 60 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./xprv2xpub.py | ./xpub2eth.py ; done ; }
-    0xc629c12cea4a2cf61286f46649282f482a872bbd
-    0x961b12f54a3132b4eaa6108349febc90531b2bbb
+    0xc629c12cea4a2Cf61286F46649282f482A872bbd
+    0x961b12F54a3132b4EaA6108349FeBC90531B2bbb
     $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xprv2xprv-hardened.py 44 | ./xprv2xprv-hardened.py 61 | ./xprv2xprv-hardened.py 0 | ./xprv2xprv.py 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xprv2xprv.py $i | ./xprv2xpub.py | ./xpub2eth.py ; done ; }
-    0xacaa32f9dd8c6a028a78140bfce50dcecaa74554
-    0xd01629d284c7d7d7d261d5f847328b23645fb7e0
+    0xACAA32F9dD8c6a028A78140bFCe50dCEcAA74554
+    0xd01629D284C7d7d7D261d5F847328B23645Fb7E0
 
 Compatibility for all these use cases (ETH/ETC with or without passphrase) has been checked:
   - Trezor 2021-02-08,

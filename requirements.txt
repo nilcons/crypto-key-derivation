@@ -8,6 +8,7 @@ stellar-sdk==3.*
 https://github.com/spesmilo/electrum/archive/42c10c2fecf5cc56d149b7d09ae2dddb36560624.tar.gz#sha256=69327086054e29d190c0d843a42874c5aaa8dc4f4f596603925308c2c8661a3a
 ecdsa
 ed25519
+web3
 
 # For development
 python-language-server
