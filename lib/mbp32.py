@@ -135,6 +135,11 @@ class XKey(NamedTuple):
         cc = xkey[13 : 13 + 32]
         return XKey(vrs, d, pfp, cn, hardened, cc, k)
 
+    @classmethod
+    def from_seed(cls, seed: bytes) -> "XKey":
+        I = utils.hmac512(b"Bitcoin seed", seed)
+        return XKey(Version.PRIVATE, 0, b"\x00\x00\x00\x00", 0, False, I[32:], Secp256k1Priv(I[0:32]))
+
     def __str__(self):
         return f"{self.version.name}({self.parent_fp.hex()}--{self.depth}:{self.child_number_with_tick()}-->{self.fp().hex()})"
 

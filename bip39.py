@@ -1,5 +1,9 @@
 #!./venv/bin/python
 
+# We use BIP39 from electrum instead of finding a smaller lib, because:
+#   - we also have electrum_mnemonic.py, so we need electrum anyway for this
+#   - other libraries force enforce the checksum check
+
 from electrum import keystore
 
 import argparse

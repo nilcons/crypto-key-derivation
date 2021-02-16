@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -e
+set -o pipefail
+set -u
+
+diff -u <(./seed2xprv.py <<< 000102030405060708090a0b0c0d0e0f) - <<EOF
+xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi
+EOF
+
+diff -u <(./seed2xprv.py <<< fffcf9f6f3f0edeae7e4e1dedbd8d5d2cfccc9c6c3c0bdbab7b4b1aeaba8a5a29f9c999693908d8a8784817e7b7875726f6c696663605d5a5754514e4b484542) - <<EOF
+xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U
+EOF
