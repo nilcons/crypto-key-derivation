@@ -15,6 +15,7 @@ from base58 import XRP_ALPHABET, b58decode_check, b58encode_check
 from cryptography.hazmat.primitives.asymmetric import ec, ed25519
 from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat, PublicFormat
 from electrum import bitcoin
+from eth_utils.crypto import keccak
 from stellar_sdk.keypair import Keypair
 from web3 import Web3
 
@@ -277,7 +278,7 @@ class XKey(NamedTuple):
             return self.key.get_private_bytes().hex()
         else:
             if isinstance(self.key, Secp256k1Pub):
-                return Web3.toChecksumAddress(utils.keccak256(self.key.key.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)[1:])[24:])
+                return Web3.toChecksumAddress(keccak(self.key.key.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)[1:]).hex()[24:])
             else:
                 raise NotImplementedError("eth addr from non-public secp256k1")
 
