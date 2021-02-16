@@ -14,6 +14,7 @@ from typing import NamedTuple, Tuple
 from base58 import b58decode_check, b58encode_check
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
+from electrum import bitcoin
 
 from lib import secp256k1, utils
 
@@ -192,6 +193,17 @@ class XKey(NamedTuple):
         else:
             k, cc = self.key.derivation(self.chain_code, ci)
         return XKey(self.version, self.depth + 1, self.fp(), ci, hardened, cc, k)
+
+    # We use electrum here instead of a smaller library,
+    # because we haven't found one that:
+    #  - has a good API (easy to use),
+    #  - has type annotations,
+    #  - is maintained.
+    def to_btc(self, type: str) -> str:
+        if self.version == Version.PRIVATE:
+            return bitcoin.serialize_privkey(self.key.get_private_bytes(), True, type)
+        else:
+            return bitcoin.pubkey_to_address(type, self.key.get_public_bytes().hex())
 
 
 if __name__ == "__main__":
