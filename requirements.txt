@@ -5,6 +5,7 @@ https://github.com/pooler/electrum-ltc/archive/7f462391a686c5ee8d23fb6f43fd5bc99
 scrypt
 ed25519
 web3
+pytezos
 
 # For development
 mypy

@@ -19,6 +19,7 @@ from electrum_ltc import bitcoin as litecoin
 from eth_utils.crypto import keccak
 from stellar_sdk.keypair import Keypair
 from web3 import Web3
+from pytezos.crypto.key import Key as TezosKey
 
 from lib import secp256k1, utils
 
@@ -300,6 +301,12 @@ class XKey(NamedTuple):
             return Keypair.from_raw_ed25519_seed(self.key.get_private_bytes()).secret
         else:
             return Keypair.from_raw_ed25519_public_key(self.key.get_public_bytes()).public_key
+
+    def to_xtz(self) -> str:
+        if self.version == Version.PRIVATE:
+            return TezosKey.from_secret_exponent(self.key.get_private_bytes()).secret_key()
+        else:
+            return TezosKey.from_public_point(self.key.get_public_bytes()).public_key_hash()
 
 
 if __name__ == "__main__":

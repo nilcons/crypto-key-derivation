@@ -28,12 +28,15 @@ Useful docs derivation paths and standards:
 # Setup
 
     rm -rf venv
-    virtualenv -p python3.9 venv
+    python3.9 -m venv venv
     . venv/bin/activate
+    pip install -U pip wheel
     echo $PWD >venv/lib/python3.9/site-packages/crypto-key-derivation.pth
     pip install -r requirements.txt
+    pip install -r requirements2.txt
     touch venv/lib/python3.9/site-packages/electrum/py.typed
     touch venv/lib/python3.9/site-packages/electrum_ltc/py.typed
+    sudo apt install libsecp256k1-0
 
 # BIP39
 Online tool: https://iancoleman.github.io/bip39/#english
