@@ -1,0 +1,13 @@
+FROM ledgerhq/speculos
+RUN apt-get update
+RUN apt-get -y install npm
+RUN mkdir /ledger-cli
+WORKDIR /ledger-cli
+RUN npm install ledger-live
+RUN echo '#!/bin/bash\n\
+set -e \n\
+python /speculos/speculos.py --model nanos --seed "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" --apdu-port 40000 --display headless -l Bitcoin:/apps/btc.elf /apps/$1.elf >/speculos.log 2>&1 &\n\
+SPECULOS_APDU_PORT=40000 node_modules/ledger-live/bin/index.js sync -f basic -c $1\n\
+' >/get-address.sh
+COPY apps-out /apps
+ENTRYPOINT [ "bash", "/get-address.sh" ]
