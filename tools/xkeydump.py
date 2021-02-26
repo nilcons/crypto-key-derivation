@@ -11,5 +11,8 @@ print("Parent FP:", xkey.parent_fp.hex())
 print("Child number:", xkey.child_number_with_tick())
 print("Chain code:", xkey.chain_code.hex())
 print("Key:", xkey.key)
+if xkey.key.get_private_bytes():
+    print("Private bytes:", xkey.key.get_private_bytes().hex())
+print("Public bytes:", xkey.key.get_public_bytes().hex())
 print("Key ID:", xkey.keyid().hex())
 print("XKey:", xkey.to_xkey().decode('ascii'))

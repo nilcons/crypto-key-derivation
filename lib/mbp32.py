@@ -34,7 +34,7 @@ class Key:
         raise Exception("abstract", self)
 
     def get_private_bytes(self) -> bytes:
-        raise Exception("abstract", self)
+        return None
 
     def hardened_derivation(self, chain_code: bytes, child_index: int) -> Tuple["Key", bytes]:
         raise Exception("abstract", self)

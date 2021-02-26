@@ -136,6 +136,8 @@ with http://ripplerm.github.io/ripple-wallet/) or an XRP address.
 
 `x2xlm.py`: stdin is an xprv or an xpub, output is an XLM private key or address.
 
+`tools/xkeydump.py`: stdin is an xprv or an xpub, stdout is human readable dump.
+
 Examples:
 
     $ ./seed2xprv.py <<< 000102030405060708090a0b0c0d0e0f
