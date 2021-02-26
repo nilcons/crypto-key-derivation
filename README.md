@@ -113,8 +113,8 @@ We provide the following utilities to walk the tree:
 stdout is an xprv, containing the root of the tree.  This path is
 usually called "m" or "m/".
 
-`seed2xprv-xlm.py`: same as `seed2xprv.py`, but have to use this one
-if you are generating XLM addresses.
+`seed2xprv-ed25519.py`: same as `seed2xprv.py`, but have to use this
+one if you are generating XLM or XTZ addresses.
 
 `xderive.py 10`: stdin is an xprv/xpub, output is the xprv/xpub of
 10th child on the next level.
@@ -385,16 +385,16 @@ via Github.
 
 First keypair without passphrase:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-xlm.py | ./xderive.py 44h 148h 0h | ./x2xlm.py
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h | ./x2xlm.py
     SCGVFOJNHSOR55IAQQT2R6PFHEHCD3HVTB7PGTC3DNVL74LZQBYUBHAT
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-xlm.py | ./xderive.py 44h 148h 0h n | ./x2xlm.py
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h n | ./x2xlm.py
     GD23O4PMK22FKSQECOOBOE3WUEPHTB2QKMALHZIADYREY3WGZFUBHNFX
 
 First keypair with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-xlm.py | ./xderive.py 44h 148h 0h | ./x2xlm.py
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h | ./x2xlm.py
     SB5UTCQCF3DO54PRN2TXDV2UGJR6UEBMNGMVFRWXMRM2U6W5WC7FJRNZ
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-xlm.py | ./xderive.py 44h 148h 0h n | ./x2xlm.py
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h n | ./x2xlm.py
     GB7MHY2KDXUW6MY3PPACEOJOFSZ7EFDSY4L2C3Z4AF5VT7WPJ6R3KO3V
 
 Compatibility has been checked:
