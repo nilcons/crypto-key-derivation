@@ -16,3 +16,4 @@ https://github.com/tomv564/pyls-mypy/archive/master.tar.gz
 pyls-black
 pyls-isort
 pyflakes
+ecdsa # required for misc/slip-0010-tests.py
