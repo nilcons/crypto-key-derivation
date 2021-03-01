@@ -136,6 +136,8 @@ with http://ripplerm.github.io/ripple-wallet/) or an XRP address.
 
 `x2xlm.py`: stdin is an xprv or an xpub, output is an XLM private key or address.
 
+`x2xtz.py`: stdin is an xprv or an xpub, output is an XTZ private key or address.
+
 `tools/xkeydump.py`: stdin is an xprv or an xpub, stdout is human readable dump.
 
 Examples:
@@ -453,6 +455,31 @@ Compatibility has been checked:
   - Trezor One HAS NO SUPPORT for XRP on 2021-02-08,
   - Ledger Nano S on 2021-02-08,
   - http://ripplerm.github.io/ripple-wallet/ on 2021-02-08.
+
+
+# XTZ (Tezos)
+
+XTZ is using the same derivation standard and same curve as XLM, so
+please read the caveats there.
+
+Private keys for Tezos without and with passphrase:
+
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h | ./x2xtz.py
+    edsk3SASh4w2ZVAMGYuPvG617nxabj5Y97rBn18Jg2ZiLReMvrMfvD
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h | ./x2xtz.py
+    edsk3aGKB9F9GxPYjNASmEMdAmL1Yu1zyKLNDHJErgJUKQre4cBkLR
+
+Addresses for these:
+
+    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h n | ./x2xtz.py
+    tz1hDY7HSpaCFNeffwbF2mjmegdHAQUgyxg9
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h n | ./x2xtz.py
+    tz1aKHaJqpYqks5ttzdxqREAq2TuaV8w9Axh
+
+Compatibility has been checked:
+  - Trezor one HAS NO SUPPORT for XTZ on 2021-03-01,
+  - Ledger Nano S 2021-03-01,
+  - wallet.tezbox.com 2021-03-01.
 
 # Generating the last word in the passphrase.
 
