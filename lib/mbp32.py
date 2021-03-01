@@ -270,43 +270,60 @@ class XKey(NamedTuple):
     #  - has type annotations,
     #  - is maintained.
     def to_btc(self, type: str) -> str:
-        if self.version == Version.PRIVATE:
-            return bitcoin.serialize_privkey(self.key.get_private_bytes(), True, type)
+        if isinstance(self.key, (Secp256k1Priv, Secp256k1Pub)):
+            if self.version == Version.PRIVATE:
+                return bitcoin.serialize_privkey(self.key.get_private_bytes(), True, type)
+            else:
+                return bitcoin.pubkey_to_address(type, self.key.get_public_bytes().hex())
         else:
-            return bitcoin.pubkey_to_address(type, self.key.get_public_bytes().hex())
+            raise ValueError("Can only derive BTC from Secp256k1")
 
     def to_ltc(self, type: str) -> str:
-        if self.version == Version.PRIVATE:
-            return litecoin.serialize_privkey(self.key.get_private_bytes(), True, type)
+        if isinstance(self.key, (Secp256k1Priv, Secp256k1Pub)):
+            if self.version == Version.PRIVATE:
+                return litecoin.serialize_privkey(self.key.get_private_bytes(), True, type)
+            else:
+                return litecoin.pubkey_to_address(type, self.key.get_public_bytes().hex())
         else:
-            return litecoin.pubkey_to_address(type, self.key.get_public_bytes().hex())
+            raise ValueError("Can only derive LTC from Secp256k1")
 
     def to_eth(self) -> str:
-        if self.version == Version.PRIVATE:
-            return self.key.get_private_bytes().hex()
-        else:
-            if isinstance(self.key, Secp256k1Pub):
-                return Web3.toChecksumAddress(keccak(self.key.key.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)[1:]).hex()[24:])
+        if isinstance(self.key, (Secp256k1Priv, Secp256k1Pub)):
+            if self.version == Version.PRIVATE:
+                return self.key.get_private_bytes().hex()
+            elif isinstance(self.key, Secp256k1Pub):
+                    return Web3.toChecksumAddress(keccak(self.key.key.public_bytes(Encoding.X962, PublicFormat.UncompressedPoint)[1:]).hex()[24:])
             else:
-                raise NotImplementedError("eth addr from non-public secp256k1")
+                raise ValueError("eth addr from non-public secp256k1")
+        else:
+            raise ValueError("Can only derive ETH from Secp256k1")
 
     def to_xrp(self) -> str:
-        if self.version == Version.PRIVATE:
-            return "xrp-hex:" + self.key.get_private_bytes().hex()
+        if isinstance(self.key, (Secp256k1Priv, Secp256k1Pub)):
+            if self.version == Version.PRIVATE:
+                return "xrp-hex:" + self.key.get_private_bytes().hex()
+            else:
+                return b58encode_check(b"\x00" + utils.ripemd(utils.sha256(self.key.get_public_bytes())), XRP_ALPHABET).decode("ascii")
         else:
-            return b58encode_check(b"\x00" + utils.ripemd(utils.sha256(self.key.get_public_bytes())), XRP_ALPHABET).decode("ascii")
+            raise ValueError("Can only derive XRP from Secp256k1")
 
     def to_xlm(self) -> str:
-        if self.version == Version.PRIVATE:
-            return Keypair.from_raw_ed25519_seed(self.key.get_private_bytes()).secret
+        if isinstance(self.key, (ED25519Priv, ED25519Pub)):
+            if self.version == Version.PRIVATE:
+                return Keypair.from_raw_ed25519_seed(self.key.get_private_bytes()).secret
+            else:
+                return Keypair.from_raw_ed25519_public_key(self.key.get_public_bytes()).public_key
         else:
-            return Keypair.from_raw_ed25519_public_key(self.key.get_public_bytes()).public_key
+            raise ValueError("Can only derive XLM from ED25519")
 
     def to_xtz(self) -> str:
-        if self.version == Version.PRIVATE:
-            return TezosKey.from_secret_exponent(self.key.get_private_bytes()).secret_key()
+        if isinstance(self.key, (ED25519Priv, ED25519Pub)):
+            if self.version == Version.PRIVATE:
+                return TezosKey.from_secret_exponent(self.key.get_private_bytes()).secret_key()
+            else:
+                return TezosKey.from_public_point(self.key.get_public_bytes()).public_key_hash()
         else:
-            return TezosKey.from_public_point(self.key.get_public_bytes()).public_key_hash()
+            raise ValueError("Can only derive XTZ from ED25519")
 
 
 if __name__ == "__main__":
