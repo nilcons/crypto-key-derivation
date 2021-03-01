@@ -300,12 +300,12 @@ Native segwit address and it's secret key:
 
 Same tests with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\nabc" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h 0 0 n |./x2ltc.py
-    LduZ8dL5REw7NnhNx9j5qBwdUfqPP9Sb4f
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\nabc" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 n |./x2ltc.py p2wpkh-p2sh
-    MG6vu3q25343H9JHkn3jAXffKsJbLua2Vx
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\nabc" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 n |./x2ltc.py p2wpkh
-    ltc1qhqw64frfanzsktas5xtykpz0gxszzljrcwlmzz
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h 0 0 n |./x2ltc.py
+    LeDBxtvf7bEWv6kQZZABjJjwkKN2Z7hthP
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 n |./x2ltc.py p2wpkh-p2sh
+    MTddkJbketBDAj1J3rebbFzs91kbjKTwvq
+    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 n |./x2ltc.py p2wpkh
+    ltc1qr2tzvm3gdl3u0w3wj8g2p3t0nhk79qtsfv7mtk
 
 4 modes have been checked with Ledger Nano S on 2021-02-16:
   - legacy NOT SUPPORTED by Ledger Nano S,
