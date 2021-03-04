@@ -11,7 +11,7 @@
 from enum import Enum
 from typing import NamedTuple, Tuple
 
-from base58 import XRP_ALPHABET, b58decode_check, b58encode_check
+from base58_2 import XRP_ALPHABET, b58decode_check, b58encode_check
 from cryptography.hazmat.primitives.asymmetric import ec, ed25519
 from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, PrivateFormat, PublicFormat
 from electrum import bitcoin
