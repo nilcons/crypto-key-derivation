@@ -35,34 +35,40 @@ Online tool: https://iancoleman.github.io/bip39/#english
 
 The standard BIP39 seed derivation can be used like this:
 
-    $ ./bip39.py <<EOF
-      scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
-      TREZOR
-      EOF
-    7b4a10be9d98e6cba265566db7f136718e1398c71cb581e1b2f464cac1ceedf4f3e274dc270003c670ad8d02c4558b2f8e39edea2775c9e232c7cb798b069e88
+```
+$ ./bip39.py <<EOF
+> scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
+> TREZOR
+> EOF
+7b4a10be9d98e6cba265566db7f136718e1398c71cb581e1b2f464cac1ceedf4f3e274dc270003c670ad8d02c4558b2f8e39edea2775c9e232c7cb798b069e88
+```
 
 The string "TREZOR" here is the so called passphrase, which in BIP39
 makes it possible for the user to add an additional phrase not in an
 english dictionary.  You do not have to use it if you don't want to:
 
-    $ ./bip39.py <<EOF
-      scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
-      EOF
-    a555426999448df9022c3afc2ed0e4aebff3a0ac37d8a395f81412e14994efc960ed168d39a80478e0467a3d5cfc134fef2767c1d3a27f18e3afeb11bfc8e6ad
+```
+$ ./bip39.py <<EOF
+> scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
+> EOF
+a555426999448df9022c3afc2ed0e4aebff3a0ac37d8a395f81412e14994efc960ed168d39a80478e0467a3d5cfc134fef2767c1d3a27f18e3afeb11bfc8e6ad
+```
 
 # BIP39, Electrum variant
 If you create a new wallet with Electrum, they use a modified version
 of BIP39, because they have some reasons how theirs is better...
 
-    $ ./electrum_mnemonic.py <<EOF
-      scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
-      TREZOR
-      EOF
-    7d8b4005aa5e21e438057535a8a37944f5b110f3df91743bca22ffdcd2690fd1d83611d7740719199fa3e6093a756b2bf6a4e1975da733a114325733b056d86a
-    $ ./electrum_mnemonic.py <<EOF
-      scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
-      EOF
-    d27376868abe32360d112c0afd31298b0d5a91d895a3edebbccabb96a58161b67a2e7f35902d958bb3fedac0b818c87ce7e97b5309af612ee0a539ed029a107b
+```
+$ ./electrum_mnemonic.py <<EOF
+> scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
+> TREZOR
+> EOF
+7d8b4005aa5e21e438057535a8a37944f5b110f3df91743bca22ffdcd2690fd1d83611d7740719199fa3e6093a756b2bf6a4e1975da733a114325733b056d86a
+$ ./electrum_mnemonic.py <<EOF
+> scissors invite lock maple supreme raw rapid void congress muscle digital elegant little brisk hair mango congress clump
+> EOF
+d27376868abe32360d112c0afd31298b0d5a91d895a3edebbccabb96a58161b67a2e7f35902d958bb3fedac0b818c87ce7e97b5309af612ee0a539ed029a107b
+```
 
 # BIP32
 Once we have a seed, we can use BIP32 for the derivation of a
@@ -134,29 +140,33 @@ with http://ripplerm.github.io/ripple-wallet/) or an XRP address.
 
 Examples:
 
-    $ ./seed2xprv.py <<< 000102030405060708090a0b0c0d0e0f
-    xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi
-    $ ./xderive.py n <<< xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi
-    xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8
-    $ ./xderive.py 0 <<< xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U
-    xprv9vHkqa6EV4sPZHYqZznhT2NPtPCjKuDKGY38FBWLvgaDx45zo9WQRUT3dKYnjwih2yJD9mkrocEZXo1ex8G81dwSM1fwqWpWkeS3v86pgKt
-    $ echo "xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U" | ./xderive.py 0 n
-    xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmXUbC6wb7ERfvrnKZjXoUmmDznezpbZb7ap6r1D3tgFxHmwMkQTPH
-    $ ./xderive.py 2147483647h <<< xprv9vHkqa6EV4sPZHYqZznhT2NPtPCjKuDKGY38FBWLvgaDx45zo9WQRUT3dKYnjwih2yJD9mkrocEZXo1ex8G81dwSM1fwqWpWkeS3v86pgKt
-    xprv9wSp6B7kry3Vj9m1zSnLvN3xH8RdsPP1Mh7fAaR7aRLcQMKTR2vidYEeEg2mUCTAwCd6vnxVrcjfy2kRgVsFawNzmjuHc2YmYRmagcEPdU9
-    $ ./xderive.py 1 <<< xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyBLZ85ySDhKiLDBrQSARLq1uNRts8RuJiHjaDMBU4Zn9h8LZNnBC5y4a
-    xpub6DF8uhdarytz3FWdA8TvFSvvAh8dP3283MY7p2V4SeE2wyWmG5mg5EwVvmdMVCQcoNJxGoWaU9DCWh89LojfZ537wTfunKau47EL2dhHKon
-    $ ./x2btc.py <<< xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP
-    p2pkh:L15hj1TsQC1eCnMwd4CkZTGh8iusyHjDtz2oNL968oPz9dXGEeP4
-    $ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xderive.py n | ./x2btc.py
-    19C8rUkmD1QG13qrpqypo3pEGuVMfEd8q5
+```
+$ ./seed2xprv.py <<< 000102030405060708090a0b0c0d0e0f
+xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi
+$ ./xderive.py n <<< xprv9s21ZrQH143K3QTDL4LXw2F7HEK3wJUD2nW2nRk4stbPy6cq3jPPqjiChkVvvNKmPGJxWUtg6LnF5kejMRNNU3TGtRBeJgk33yuGBxrMPHi
+xpub661MyMwAqRbcFtXgS5sYJABqqG9YLmC4Q1Rdap9gSE8NqtwybGhePY2gZ29ESFjqJoCu1Rupje8YtGqsefD265TMg7usUDFdp6W1EGMcet8
+$ ./xderive.py 0 <<< xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U
+xprv9vHkqa6EV4sPZHYqZznhT2NPtPCjKuDKGY38FBWLvgaDx45zo9WQRUT3dKYnjwih2yJD9mkrocEZXo1ex8G81dwSM1fwqWpWkeS3v86pgKt
+$ echo "xprv9s21ZrQH143K31xYSDQpPDxsXRTUcvj2iNHm5NUtrGiGG5e2DtALGdso3pGz6ssrdK4PFmM8NSpSBHNqPqm55Qn3LqFtT2emdEXVYsCzC2U" | ./xderive.py 0 n
+xpub69H7F5d8KSRgmmdJg2KhpAK8SR3DjMwAdkxj3ZuxV27CprR9LgpeyGmXUbC6wb7ERfvrnKZjXoUmmDznezpbZb7ap6r1D3tgFxHmwMkQTPH
+$ ./xderive.py 2147483647h <<< xprv9vHkqa6EV4sPZHYqZznhT2NPtPCjKuDKGY38FBWLvgaDx45zo9WQRUT3dKYnjwih2yJD9mkrocEZXo1ex8G81dwSM1fwqWpWkeS3v86pgKt
+xprv9wSp6B7kry3Vj9m1zSnLvN3xH8RdsPP1Mh7fAaR7aRLcQMKTR2vidYEeEg2mUCTAwCd6vnxVrcjfy2kRgVsFawNzmjuHc2YmYRmagcEPdU9
+$ ./xderive.py 1 <<< xpub6ASAVgeehLbnwdqV6UKMHVzgqAG8Gr6riv3Fxxpj8ksbH9ebxaEyBLZ85ySDhKiLDBrQSARLq1uNRts8RuJiHjaDMBU4Zn9h8LZNnBC5y4a
+xpub6DF8uhdarytz3FWdA8TvFSvvAh8dP3283MY7p2V4SeE2wyWmG5mg5EwVvmdMVCQcoNJxGoWaU9DCWh89LojfZ537wTfunKau47EL2dhHKon
+$ ./x2btc.py <<< xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP
+p2pkh:L15hj1TsQC1eCnMwd4CkZTGh8iusyHjDtz2oNL968oPz9dXGEeP4
+$ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xderive.py n | ./x2btc.py
+19C8rUkmD1QG13qrpqypo3pEGuVMfEd8q5
+```
 
 You can also get segwit addresses or P2SH compatible segwit addresses:
 
-    $ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xderive.py n | ./x2btc.py p2wpkh
-    bc1qt8wzxfq4p2ufpumd6w02p7kdr5c7uaqeekmeje
-    $ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xderive.py n | ./x2btc.py p2wpkh-p2sh
-    37GxRVzwaiQ7vdZbVJpmfG64gy8tWWomFz
+```
+$ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xderive.py n | ./x2btc.py p2wpkh
+bc1qt8wzxfq4p2ufpumd6w02p7kdr5c7uaqeekmeje
+$ echo "xprv9xAtkRR4Ru4DcgwbM22eoVpBEnJysuy7mxxur8Lrqad6qTnnQHhtR64MvvhXUZYhzUc7FDNwT9xC3ym47vvWB3XEst63pjkPWDRf79a6DTP" | ./xderive.py n | ./x2btc.py p2wpkh-p2sh
+37GxRVzwaiQ7vdZbVJpmfG64gy8tWWomFz
+```
 
 Note, that for P2SH and legacy the casing of the address is important,
 for the new segwit address type everything is lowercase.
@@ -172,36 +182,25 @@ Electrum stores public addresses at "m/0/i" and change addresses at
 
 Therefore:
 
-    $ ./electrum_mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xderive.py 0 n | { read xpub ; for i in `seq 0 19` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
-    19C8rUkmD1QG13qrpqypo3pEGuVMfEd8q5
-    17p8unm85w7uDVpxhp16y6DKbJJT8S3ZgY
-    1JkEikqjLMVpJLBUPwK3HqbTkMYN1tw6jg
-    13Vzzos4GGiFuojJfphZnp56Z1wTgf84RB
-    1PTp9KgEHM3oqN6jJuFjVgG3Dq4ZiedxNU
-    12YA627tRfApBriCtwhA5gDqp4FhNjVTEX
-    15xN2PGGhHdf8d186HmT81o87Vuof66Ycj
-    12Uhpf3GDSeENinsVwdYZEH11YRSJ1ovcC
-    18kBZBYU3rRSgFJSDmRqBR5Qha7eid88BN
-    1JvxirnjZrvCeQtZivYisZUDKixuUvdA1L
-    1KgGzrtDLyrgQXpymVWoMXovq8kV1A64Ya
-    1P8L8eG1LTDUQCAsRR1LWqj2gZKkK1z8WD
-    113SW2JqU5xDGVYckTcvWM9pWnfnUp8ehv
-    1LQyZWScfG5Y81DwxUgPdJJbpAk3ZWWr1f
-    17x4Lmw6yYa7zieziWmjsgLLYTsGwzgyrf
-    1DmsZGdvwpBN4HZqATjSxcX9rnpXgVXb49
-    1NMFAKSy3zKMA7tb7RicXG8Y1ESN5j67xJ
-    126TCaqairxXAY3M1PCD3UokubBh6rN8aN
-    1HJpJnHX2q1GZQHPKg1vLG2dkL6CNMr3E9
-    15Ve2ATPKfSQrwvzn72yUPunQj3Eao7EyC
+```
+$ ./electrum_mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xderive.py 0 n | { read xpub ; for i in `seq 0 4` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
+19C8rUkmD1QG13qrpqypo3pEGuVMfEd8q5
+17p8unm85w7uDVpxhp16y6DKbJJT8S3ZgY
+1JkEikqjLMVpJLBUPwK3HqbTkMYN1tw6jg
+13Vzzos4GGiFuojJfphZnp56Z1wTgf84RB
+1PTp9KgEHM3oqN6jJuFjVgG3Dq4ZiedxNU
+```
 
 And for the change addresses:
 
-    $ ./electrum_mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xderive.py 1 n | { read xpub ; for i in `seq 0 4` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
-    1MTWgVQQLEj8YMckR2p6CuXyc3AviAHkY5
-    17TBRJy4NG6sqmfMYnKJ2bb7w7prb2mDAx
-    1BTY3J6dqst3zYjQtpty3HGxomUAQ4D2Vv
-    1GfzFS1hyeMfch3nFc3ghosYK2MJrcnuJ5
-    1JfLH3gU9iTeb19w2P6MbdxPyXePozepNz
+```
+$ ./electrum_mnemonic.py <<< "aerobic melody aerobic join crunch quiz ring icon brisk speak someone marine" | ./seed2xprv.py | ./xderive.py 1 n | { read xpub ; for i in `seq 0 4` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
+1MTWgVQQLEj8YMckR2p6CuXyc3AviAHkY5
+17TBRJy4NG6sqmfMYnKJ2bb7w7prb2mDAx
+1BTY3J6dqst3zYjQtpty3HGxomUAQ4D2Vv
+1GfzFS1hyeMfch3nFc3ghosYK2MJrcnuJ5
+1JfLH3gU9iTeb19w2P6MbdxPyXePozepNz
+```
 
 Compatiblity with Electrum 2.9.3 has been verified on 2017-10-19.
 
@@ -216,34 +215,40 @@ rifle market inside have ill true analyst
 You can generate the first 2 addresses of the first legacy, segwit and
 native segwit account like this:
 
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
-    1GhzX8gLBfG96Qg1mk9S5ckhVPsxeeBiSC
-    18sRn1xohBhxHH9XZHgFBmZmuH5cUWpWwz
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh-p2sh ; done ; }
-    39Fh4GYAW5QWuT118vYMhfatQtz5UcTaa7
-    38xnPRH891kEGkqQKi7yF3uPACGksjp56B
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh ; done ; }
-    bc1q4qfcaq4fzcn3q5tvksds4e00hs45fcu6pznsy8
-    bc1qgwtfdq3jzv2324hy7l9575x73sjmgky0ky08fk
+```
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
+1GhzX8gLBfG96Qg1mk9S5ckhVPsxeeBiSC
+18sRn1xohBhxHH9XZHgFBmZmuH5cUWpWwz
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh-p2sh ; done ; }
+39Fh4GYAW5QWuT118vYMhfatQtz5UcTaa7
+38xnPRH891kEGkqQKi7yF3uPACGksjp56B
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh ; done ; }
+bc1q4qfcaq4fzcn3q5tvksds4e00hs45fcu6pznsy8
+bc1qgwtfdq3jzv2324hy7l9575x73sjmgky0ky08fk
+```
 
 Or if you have a secret wallet with the passphrase of "do not
 show my wife", then you can get the addresses like this:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
-    1Hvv8XyMtT8QGAXLTRE1bgEYbpfj7bZmN9
-    1JiWHCAHmzsfJcag78339H1UNbkgb7cyTz
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh-p2sh ; done ; }
-    3FdXjsy32tZdrma6WvApUvFwFv8oNhPnp1
-    3AuVfCnp19R8Eoa5CZXeGJjU1TQDy6fW58
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh ; done ; }
-    bc1q3jl5dkp57fgs3uxcyz56dpdgv7d3pg00jvlxc3
-    bc1q7u0hytrgmd6xllkrz0npflcpzukjdktg6zuu6v
+```
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py ; done ; }
+1Hvv8XyMtT8QGAXLTRE1bgEYbpfj7bZmN9
+1JiWHCAHmzsfJcag78339H1UNbkgb7cyTz
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh-p2sh ; done ; }
+3FdXjsy32tZdrma6WvApUvFwFv8oNhPnp1
+3AuVfCnp19R8Eoa5CZXeGJjU1TQDy6fW58
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 0h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh ; done ; }
+bc1q3jl5dkp57fgs3uxcyz56dpdgv7d3pg00jvlxc3
+bc1q7u0hytrgmd6xllkrz0npflcpzukjdktg6zuu6v
+```
 
 Get the private keys for the last 2 output:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 0h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh ; done ; }
-    p2wpkh:Kwo5JqiLtw3ktrzQ3aqqJ3hoVfNcgCJZZ7TCbvrXjhz8tqQNPrQu
-    p2wpkh:L1cc4Q1UTmzgcE8p7pgNX4pnekyejbDfXbH1rh3WHTpTdgVbmJmq
+```
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 0h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2btc.py p2wpkh ; done ; }
+p2wpkh:Kwo5JqiLtw3ktrzQ3aqqJ3hoVfNcgCJZZ7TCbvrXjhz8tqQNPrQu
+p2wpkh:L1cc4Q1UTmzgcE8p7pgNX4pnekyejbDfXbH1rh3WHTpTdgVbmJmq
+```
 
 4 modes have been checked for compatility with a real Trezor on 2017-10-19:
 
@@ -273,33 +278,41 @@ Get the private keys for the last 2 output:
 
 Legacy address and it's secret key:
 
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h n 0 0 |./x2ltc.py
-    LRZrQayJyVWwQQw9VRVz1uDq3y42pwzLu7
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h 0 0 |./x2ltc.py
-    p2pkh:TAFkrmCtXjVUMXJdthrspNi3Km3dQkq2VFixFGNERs83VtM9kArH
+```
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h n 0 0 |./x2ltc.py
+LRZrQayJyVWwQQw9VRVz1uDq3y42pwzLu7
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h 0 0 |./x2ltc.py
+p2pkh:TAFkrmCtXjVUMXJdthrspNi3Km3dQkq2VFixFGNERs83VtM9kArH
+```
 
 Segwit address and it's secret key:
 
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 |./x2ltc.py p2wpkh-p2sh
-    p2wpkh-p2sh:T7bFZEhuwmcRF3eaYHyuDeEJLaU549KKBoKUL3Exhf9Kaa9TAQJq
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 n |./x2ltc.py p2wpkh-p2sh
-    MKMPWJ4t5h3sbZTYgPraevEYqecQKSz46Z
+```
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 |./x2ltc.py p2wpkh-p2sh
+p2wpkh-p2sh:T7bFZEhuwmcRF3eaYHyuDeEJLaU549KKBoKUL3Exhf9Kaa9TAQJq
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 n |./x2ltc.py p2wpkh-p2sh
+MKMPWJ4t5h3sbZTYgPraevEYqecQKSz46Z
+```
 
 Native segwit address and it's secret key:
 
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 |./x2ltc.py p2wpkh
-    p2wpkh:T5J1kC22CWCZeDnhaKm7qWa3Ur5xk9SfRKw4iVm784qMLD3F5B7Z
-    $ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 n |./x2ltc.py p2wpkh
-    ltc1qcnwyxrceaz50ygfdqxd3at48j474sxtsnpz8y3
+```
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 |./x2ltc.py p2wpkh
+p2wpkh:T5J1kC22CWCZeDnhaKm7qWa3Ur5xk9SfRKw4iVm784qMLD3F5B7Z
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 n |./x2ltc.py p2wpkh
+ltc1qcnwyxrceaz50ygfdqxd3at48j474sxtsnpz8y3
+```
 
 Same tests with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h 0 0 n |./x2ltc.py
-    LeDBxtvf7bEWv6kQZZABjJjwkKN2Z7hthP
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 n |./x2ltc.py p2wpkh-p2sh
-    MTddkJbketBDAj1J3rebbFzs91kbjKTwvq
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 n |./x2ltc.py p2wpkh
-    ltc1qr2tzvm3gdl3u0w3wj8g2p3t0nhk79qtsfv7mtk
+```
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 2h 0h 0 0 n |./x2ltc.py
+LeDBxtvf7bEWv6kQZZABjJjwkKN2Z7hthP
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 49h 2h 0h 0 0 n |./x2ltc.py p2wpkh-p2sh
+MTddkJbketBDAj1J3rebbFzs91kbjKTwvq
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 84h 2h 0h 0 0 n |./x2ltc.py p2wpkh
+ltc1qr2tzvm3gdl3u0w3wj8g2p3t0nhk79qtsfv7mtk
+```
 
 4 modes have been checked with Ledger Nano S on 2021-02-16:
   - legacy NOT SUPPORTED by Ledger Nano S,
@@ -319,39 +332,47 @@ Same tests with passphrase:
 
 First 2 private keys for Ethereum and for Ethereum Classic without passphrase:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 60h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
-    bb36972e4db24cffd1dba3342c4c801c3344fe429500bdba192e2f49673f9139
-    6a72d0345f06270cabe20f8f218f25073108586bc81c985eaa02a27533949a35
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 61h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
-    fc265563c97398fc26f6e47eda38827f865dead4f853f2f571654f4eaf6667f0
-    31a6315abcc2fdcb47c14eea6d7c1b357cfdfe17674f34f43af7722d87d2350d
+```
+$ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 60h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
+bb36972e4db24cffd1dba3342c4c801c3344fe429500bdba192e2f49673f9139
+6a72d0345f06270cabe20f8f218f25073108586bc81c985eaa02a27533949a35
+$ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 61h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
+fc265563c97398fc26f6e47eda38827f865dead4f853f2f571654f4eaf6667f0
+31a6315abcc2fdcb47c14eea6d7c1b357cfdfe17674f34f43af7722d87d2350d
+```
 
 Addresses for these:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 60h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
-    0x154D15BB73A7c01a208D3b7fEB1d77cd65756f86
-    0xf8dFcB912129C22Db155Fb861D6F7A9DdDAEe0Be
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 61h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
-    0x919903583020fb1dc543284bcD75d4737baD415A
-    0x3e605cD53A01Cbe4604f4C750855874CC90D6116
+```
+$ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 60h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
+0x154D15BB73A7c01a208D3b7fEB1d77cd65756f86
+0xf8dFcB912129C22Db155Fb861D6F7A9DdDAEe0Be
+$ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 61h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
+0x919903583020fb1dc543284bcD75d4737baD415A
+0x3e605cD53A01Cbe4604f4C750855874CC90D6116
+```
 
 First 2 private keys for Ethereum and for Ethereum Classic with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 60h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
-    be080f5d5bd51985b05b001159a1bb5676309006577e0c2711658b96face6c57
-    115bf63c5495145d99434db3408cb323664c427c45a0a46b5b5e5a6dadc70ab1
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 61h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
-    8c7e65a7d43fbfca98ad6127511fd41a4d3ebc6adc976d8239bdc8f18e2b3e7d
-    21f8616e3f200fdc7054565a7be929acf91ebd884b7244ea8727a7d9393d4820
+```
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 60h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
+be080f5d5bd51985b05b001159a1bb5676309006577e0c2711658b96face6c57
+115bf63c5495145d99434db3408cb323664c427c45a0a46b5b5e5a6dadc70ab1
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 61h 0h 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
+8c7e65a7d43fbfca98ad6127511fd41a4d3ebc6adc976d8239bdc8f18e2b3e7d
+21f8616e3f200fdc7054565a7be929acf91ebd884b7244ea8727a7d9393d4820
+```
 
 Addresses for these:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 60h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
-    0xc629c12cea4a2Cf61286F46649282f482A872bbd
-    0x961b12F54a3132b4EaA6108349FeBC90531B2bbb
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 61h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
-    0xACAA32F9dD8c6a028A78140bFCe50dCEcAA74554
-    0xd01629D284C7d7d7D261d5F847328B23645Fb7E0
+```
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 60h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
+0xc629c12cea4a2Cf61286F46649282f482A872bbd
+0x961b12F54a3132b4EaA6108349FeBC90531B2bbb
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 61h 0h n 0 | { read xpub ; for i in `seq 0 1` ; do echo $xpub | ./xderive.py $i | ./x2eth.py ; done ; }
+0xACAA32F9dD8c6a028A78140bFCe50dCEcAA74554
+0xd01629D284C7d7d7D261d5F847328B23645Fb7E0
+```
 
 Compatibility for all these use cases (ETH/ETC with or without passphrase) has been checked:
   - Trezor 2021-02-08,
@@ -381,17 +402,21 @@ via Github.
 
 First keypair without passphrase:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h | ./x2xlm.py
-    SCGVFOJNHSOR55IAQQT2R6PFHEHCD3HVTB7PGTC3DNVL74LZQBYUBHAT
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h n | ./x2xlm.py
-    GD23O4PMK22FKSQECOOBOE3WUEPHTB2QKMALHZIADYREY3WGZFUBHNFX
+```
+$ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h | ./x2xlm.py
+SCGVFOJNHSOR55IAQQT2R6PFHEHCD3HVTB7PGTC3DNVL74LZQBYUBHAT
+$ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h n | ./x2xlm.py
+GD23O4PMK22FKSQECOOBOE3WUEPHTB2QKMALHZIADYREY3WGZFUBHNFX
+```
 
 First keypair with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h | ./x2xlm.py
-    SB5UTCQCF3DO54PRN2TXDV2UGJR6UEBMNGMVFRWXMRM2U6W5WC7FJRNZ
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h n | ./x2xlm.py
-    GB7MHY2KDXUW6MY3PPACEOJOFSZ7EFDSY4L2C3Z4AF5VT7WPJ6R3KO3V
+```
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h | ./x2xlm.py
+SB5UTCQCF3DO54PRN2TXDV2UGJR6UEBMNGMVFRWXMRM2U6W5WC7FJRNZ
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 148h 0h n | ./x2xlm.py
+GB7MHY2KDXUW6MY3PPACEOJOFSZ7EFDSY4L2C3Z4AF5VT7WPJ6R3KO3V
+```
 
 Compatibility has been checked:
   - Trezor One on 2021-02-08,
@@ -431,17 +456,21 @@ this web tool, since it's compatible with our `x2xrp.py` hex output.
 
 Example without passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 | ./x2xrp.py
-    xrp-hex:58fe510ffea22709defc4a2c55d1054d2d37ef46bb4a728f38d6b3fbe112850b
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 n | ./x2xrp.py
-    rH4b7nXtPgfjmtdfVLcY7qvMUFcMwLE5HX
+```
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 | ./x2xrp.py
+xrp-hex:58fe510ffea22709defc4a2c55d1054d2d37ef46bb4a728f38d6b3fbe112850b
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 n | ./x2xrp.py
+rH4b7nXtPgfjmtdfVLcY7qvMUFcMwLE5HX
+```
 
 Example with passphrase:
 
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 | ./x2xrp.py
-    xrp-hex:dffefc577f9b97008f60592482d29d8da5a19b202b22f887d1b234df7c2edad2
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 n | ./x2xrp.py
-    rhbZf6hesPYXX1VgBqCXjK6jvAAbiwL4T6
+```
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 | ./x2xrp.py
+xrp-hex:dffefc577f9b97008f60592482d29d8da5a19b202b22f887d1b234df7c2edad2
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 144h 0h 0 0 n | ./x2xrp.py
+rhbZf6hesPYXX1VgBqCXjK6jvAAbiwL4T6
+```
 
 Compatibility has been checked:
   - Trezor One HAS NO SUPPORT for XRP on 2021-02-08,
@@ -456,17 +485,21 @@ please read the caveats there.
 
 Private keys for Tezos without and with passphrase:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h | ./x2xtz.py
-    edsk3SASh4w2ZVAMGYuPvG617nxabj5Y97rBn18Jg2ZiLReMvrMfvD
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h | ./x2xtz.py
-    edsk3aGKB9F9GxPYjNASmEMdAmL1Yu1zyKLNDHJErgJUKQre4cBkLR
+```
+$ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h | ./x2xtz.py
+edsk3SASh4w2ZVAMGYuPvG617nxabj5Y97rBn18Jg2ZiLReMvrMfvD
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h | ./x2xtz.py
+edsk3aGKB9F9GxPYjNASmEMdAmL1Yu1zyKLNDHJErgJUKQre4cBkLR
+```
 
 Addresses for these:
 
-    $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h n | ./x2xtz.py
-    tz1hDY7HSpaCFNeffwbF2mjmegdHAQUgyxg9
-    $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h n | ./x2xtz.py
-    tz1aKHaJqpYqks5ttzdxqREAq2TuaV8w9Axh
+```
+$ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h n | ./x2xtz.py
+tz1hDY7HSpaCFNeffwbF2mjmegdHAQUgyxg9
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h n | ./x2xtz.py
+tz1aKHaJqpYqks5ttzdxqREAq2TuaV8w9Axh
+```
 
 Compatibility has been checked:
   - Trezor one HAS NO SUPPORT for XTZ on 2021-03-01,
