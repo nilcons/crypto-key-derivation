@@ -13,6 +13,7 @@ def input_with_message(message):
 
 def main():
     arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("--passphrase", action="store_true", default=False)
     arg_parser.add_argument("n", nargs="?", default=None)
     args = arg_parser.parse_args()
 
@@ -20,7 +21,7 @@ def main():
         n = int(args.n)
     else:
         n = int(input_with_message("How many words do you want to type: "))
-    assert(1 < n)
+    assert(0 < n)
 
     order = list(range(n))
     prng = coinchooser.PRNG(os.urandom(100))
@@ -39,6 +40,9 @@ def main():
                 print("INVALID WORD, TYPE AGAIN", file=sys.stderr)
         words[order[i]] = word
     print(" ".join(words))
+
+    if args.passphrase:
+        print(input_with_message("Type passphrase: "))
 
 
 if __name__ == "__main__":
