@@ -20,6 +20,7 @@ together.  This is followed by some wallets (e.g. Trezor), while not
 followed by others (e.g. Electrum).
 
 Useful docs derivation paths and standards:
+  - https://github.com/LedgerHQ/ledgerjs/blob/master/packages/cryptoassets/src/currencies.js
   - https://docs.trezor.io/trezor-firmware/misc/coins-bip44-paths.html
   - https://github.com/satoshilabs/slips/blob/master/slip-0044.md
   - https://github.com/trezor/trezor-firmware/tree/master/python/src/trezorlib
