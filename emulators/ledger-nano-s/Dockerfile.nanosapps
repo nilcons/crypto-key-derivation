@@ -24,3 +24,9 @@ RUN cd /apps/app-bitcoin && git checkout 1.5.5 && git clean -dfx && COIN=litecoi
 RUN git clone https://github.com/ledgerhq/app-tezos
 # COMMIT=76ffcd4c
 RUN cd /apps/app-tezos && git checkout unifiy-ux && make -j8 bin/app.elf && cp bin/app.elf /apps-out/xtz.elf
+
+# This is only for the future.
+# ADA is currently not supported by ledger live.
+# If we figure out how to use the emulator protocol to get an address, then we can maybe use this...
+RUN git clone https://github.com/ledgerhq/app-cardano
+RUN cd /apps/app-cardano && git checkout 2.2.0 && make -j8 bin/app.elf && cp bin/app.elf /apps-out/ada.elf
