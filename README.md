@@ -122,7 +122,7 @@ one if you are generating XLM or XTZ addresses.
 10th hardened child on the next level.
 
 `xderive.py n`: stdin is an xprv, output is the xpub (that doesn't
-have the secret anymore).
+have the secret anymore, `n` stands for neutered).
 
 `x2btc.py`: stdin is an xprv/xpub, output is a BTC secret key or
 address.  You can use https://www.bitaddress.org/ to check the keypair.
@@ -392,7 +392,7 @@ Stellar.)
 
 This means that with XLM, you will always have to use private hardened
 derivations and then only in the last step (before printing the
-address) can you go to xpub with `xprv2xpub.py`.
+address) can you go to xpub with `xderive.py n`.
 
 Also note, that we had to extend the xpub/xprv format a bit, to
 represent the fact that the key is an ed25519 key, not a secp256k1, so
@@ -481,7 +481,11 @@ Compatibility has been checked:
 
 # XTZ (Tezos)
 
-XTZ is using three different curves. This tool currently supports two of the curves, ED25519 and Secp256k1, for tz1 and tz2 addresses, respectively. Please see the caveats concerning ED25519 mentioned in the section on XLM.
+XTZ is using three different curves: ED25519 for tz1 addresses,
+Secp256k1 for tz2 addresses and Secp256r1 for tz3 addresses.  This
+tool currently supports two of the curves, ED25519/tz1 and
+Secp256k1/tz2.  Please see the caveats concerning ED25519/tz1
+mentioned in the section on XLM.
 
 Private keys for Tezos without and with passphrase (ED25519/tz1):
 
