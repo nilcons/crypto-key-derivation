@@ -481,10 +481,9 @@ Compatibility has been checked:
 
 # XTZ (Tezos)
 
-XTZ is using the same derivation standard and same curve as XLM, so
-please read the caveats there.
+XTZ is using three different curves. This tool currently supports two of the curves, ED25519 and Secp256k1, for tz1 and tz2 addresses, respectively. Please see the caveats concerning ED25519 mentioned in the section on XLM.
 
-Private keys for Tezos without and with passphrase:
+Private keys for Tezos without and with passphrase (ED25519/tz1):
 
 ```
 $ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv-ed25519.py | ./xderive.py 44h 1729h 0h 0h | ./x2xtz.py
@@ -502,9 +501,28 @@ $ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop r
 tz1aKHaJqpYqks5ttzdxqREAq2TuaV8w9Axh
 ```
 
+Private keys for Tezos without and with passphrase (Secp256k1/tz2):
+
+```
+$ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 1729h 0h 0h | ./x2xtz.py
+spsk24mup6mo8132KGD2goYpV17FEvvDnk1RQYD5EcTCpARaVcTC7p
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 1729h 0h 0h | ./x2xtz.py
+spsk2xoFEe5VrmPYyQuYQUaD27zXH5e7vE9hTVgtDdRrV9fdCk3dFh
+```
+
+Addresses for these:
+
+```
+$ ./bip39.py <<< "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./seed2xprv.py | ./xderive.py 44h 1729h 0h 0h n | ./x2xtz.py
+tz2RvYDs1YgBfUXGPo9UijX4Ck2HcbQ7C63p
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 1729h 0h 0h n | ./x2xtz.py
+tz2N7Tvk39ckAwDPn8MnSQ5Q25yAckm4TNGM
+```
+
 Compatibility has been checked:
   - Trezor one HAS NO SUPPORT for XTZ on 2021-03-01,
   - Ledger Nano S 2021-03-01,
+  - Ledger Nano X 2021-05-16,
   - wallet.tezbox.com 2021-03-01.
 
 # Generating the last word in the passphrase.

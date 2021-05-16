@@ -318,12 +318,19 @@ class XKey(NamedTuple):
 
     def to_xtz(self) -> str:
         if isinstance(self.key, (ED25519Priv, ED25519Pub)):
+            # ED25519 tz1 addresses
             if self.version == Version.PRIVATE:
-                return TezosKey.from_secret_exponent(self.key.get_private_bytes()).secret_key()
+                return TezosKey.from_secret_exponent(self.key.get_private_bytes(), curve = b'ed').secret_key()
             else:
-                return TezosKey.from_public_point(self.key.get_public_bytes()).public_key_hash()
+                return TezosKey.from_public_point(self.key.get_public_bytes(), curve = b'ed').public_key_hash()
+        elif isinstance(self.key, (Secp256k1Priv, Secp256k1Pub)):
+            # Secp256k1 tz2 addresses
+            if self.version == Version.PRIVATE:
+                return TezosKey.from_secret_exponent(self.key.get_private_bytes(), curve = b'sp').secret_key()
+            else:
+                return TezosKey.from_public_point(self.key.get_public_bytes(), curve = b'sp').public_key_hash()
         else:
-            raise ValueError("Can only derive XTZ from ED25519")
+            raise ValueError("Can only derive XTZ from ED25519 or Secp256k1")
 
 
 if __name__ == "__main__":
