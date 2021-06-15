@@ -2,7 +2,7 @@
 Document all the mess around bip32+bip39+bip44 and similar key generation schemes
 
 # Overview
-Our overall goal is to generate bitcoin/litecon/ethereum/etc
+Our overall goal is to generate bitcoin/litecoin/ethereum/etc
 private+public keys from a list of english words.  We also want to
 keep compatibility with hardware wallets (Trezor One and Ledger Nano
 S), so we can use this tool in an emergency when a hardware wallet is
