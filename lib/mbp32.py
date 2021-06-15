@@ -287,6 +287,20 @@ class XKey(NamedTuple):
         else:
             raise ValueError("Can only derive LTC from Secp256k1")
 
+    def to_doge(self, type: str) -> str:
+        if not isinstance(self.key, (Secp256k1Priv, Secp256k1Pub)):
+            raise ValueError("Can only derive DOGE from Secp256k1")
+        if type != "p2pkh":
+            raise ValueError("Key type %s not implemented for Dogecoin" % type)
+
+        if self.version == Version.PRIVATE:
+            litecoin.WIF_SCRIPT_TYPES['p2pkh'] = 30
+            return litecoin.serialize_privkey(self.key.get_private_bytes(), True, type)
+        else:
+            class Doge(litecoin.constants.BitcoinMainnet):
+                ADDRTYPE_P2PKH = 30
+            return litecoin.pubkey_to_address(type, self.key.get_public_bytes().hex(), net=Doge)
+
     def to_eth(self) -> str:
         if isinstance(self.key, (Secp256k1Priv, Secp256k1Pub)):
             if self.version == Version.PRIVATE:
