@@ -529,6 +529,28 @@ Compatibility has been checked:
   - Ledger Nano X 2021-05-16,
   - wallet.tezbox.com 2021-03-01.
 
+# A full example for Doge legacy addresses
+
+Legacy address and it's secret key:
+
+```
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 3h 0h n 0 0 | ./x2doge.py
+D59PrFM5WCx1RupDRTN3a8cSLX8E8pSQHt
+$ echo "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 3h 0h 0 0 | ./x2doge.py
+p2pkh:QWuNRagebPYP5oaEdPwV3QJspWZbe2yWD9pmX4LyUN2kYCVgVUsQ
+```
+
+Legacy address with passphrase:
+
+```
+$ echo -e "nation grab van ride cloth wash endless gorilla speed core dry shop raise later wedding sweet minimum rifle market inside have ill true analyst\ndo not show my wife" | ./bip39.py | ./seed2xprv.py | ./xderive.py 44h 3h 0h 0 0 n |./x2doge.py
+DAPWHicn13oJxf4hFwMtQ91Ndkf2YXUGrR
+```
+
+Comaptibility tested on 2021-07-06 with https://iancoleman.io/bip39/.
+
+TODO: test with ledger and trezor.
+
 # Generating the last word in the passphrase.
 
 In bip39 the passphrase checksum should be valid. After choosing the first n-1
