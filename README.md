@@ -31,6 +31,13 @@ Useful docs derivation paths and standards:
     sudo apt install libsecp256k1-dev
     ./init-venv.sh
 
+## Additional setup step with too new OpenSSL
+
+New OpenSSL disabled ripemd160, which is needed for this project to
+work and it's used by python's hashlib.
+
+More info: https://stackoverflow.com/questions/72409563
+
 # BIP39
 Online tool: https://iancoleman.github.io/bip39/#english
 
